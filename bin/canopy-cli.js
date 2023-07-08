@@ -1,40 +1,30 @@
 #!/usr/bin/env node
 const cdk = require('aws-cdk-lib');
-const { CdkStack } = require('../lib/cdk-stack');
+const { DataStreamStack } = require('../lib/data-stream-stack');
 const { SharedResources, VectorAwsStack } = require('../lib/backend-stack');
 
 const app = new cdk.App();
 const envJason = { account: '126159759664', region: 'us-east-2' };
 
-// new CdkStack(app, 'FirehoseDeliveryStream', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
-
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
+// new DataStreamStack(app, 'firehose-delivery-stream', {
+  // Deploys stack to Account & Region implied by current CLI config
   // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
+  // Deploys stack to specific Account and Region
   // env: envJason
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 //});
 
+// Deploys shared backend resources: VPC, ECS cluster
 const sharedResources = new SharedResources(app, 'shared-resources', {
   env: envJason
 });
 
+// Deploys Vector service
 new VectorAwsStack(app, 'vector-service', {
   CLUSTER: sharedResources.cluster,
   VPC: sharedResources.vpc,
   env: envJason
 });
-
-// new BackendStack(app, 'BackendStack', {
-//   env: envJason
-// });
 
 
 
