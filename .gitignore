@@ -1,5 +1,9 @@
 node_modules
 
+# environment variables
+.env
+
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
