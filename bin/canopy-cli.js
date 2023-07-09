@@ -5,7 +5,7 @@ const { SharedResources, VectorAwsStack } = require('../lib/backend-stack');
 const { EC2_Backend_Deployment } = require("../lib/ec2-backend-stack");
 
 const app = new cdk.App();
-const envJason = { account: '126159759664', region: 'us-east-1' };
+const envJason = { account: '126159759664', region: 'us-east-2' };
 
 // new CdkStack(app, 'FirehoseDeliveryStream', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
