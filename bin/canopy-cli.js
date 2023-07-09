@@ -2,9 +2,10 @@
 const cdk = require('aws-cdk-lib');
 const { CdkStack } = require('../lib/cdk-stack');
 const { SharedResources, VectorAwsStack } = require('../lib/backend-stack');
+const { EC2_Backend_Deployment } = require("../lib/ec2-backend-stack");
 
 const app = new cdk.App();
-const envJason = { account: '126159759664', region: 'us-east-2' };
+const envJason = { account: '126159759664', region: 'us-east-1' };
 
 // new CdkStack(app, 'FirehoseDeliveryStream', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
@@ -22,6 +23,8 @@ const envJason = { account: '126159759664', region: 'us-east-2' };
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 //});
 
+
+
 const sharedResources = new SharedResources(app, 'shared-resources', {
   env: envJason
 });
@@ -31,6 +34,10 @@ new VectorAwsStack(app, 'vector-service', {
   VPC: sharedResources.vpc,
   env: envJason
 });
+
+new EC2_Backend_Deployment(app, "EC2-Backend-deployment", {
+  env: envJason
+})
 
 // new BackendStack(app, 'BackendStack', {
 //   env: envJason
