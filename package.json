@@ -18,6 +18,7 @@
     "@aws-sdk/client-firehose": "^3.363.0",
     "@aws-sdk/client-kinesis": "^3.363.0",
     "aws-cdk-lib": "2.86.0",
+    "commander": "^11.0.0",
     "constructs": "^10.0.0"
   }
 }
