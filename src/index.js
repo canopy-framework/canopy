@@ -2,6 +2,7 @@
 
 const inquirer = require('inquirer');
 const program = require('commander');
+const fs = require('fs');
 
 
 program.description('Canopy Infrastructure Management API');
@@ -17,6 +18,7 @@ const destroy = () => {
 
 
 const configure = async () => {
+  // need to add validation
   const answers = await inquirer.prompt([
     {
         name: "accessKey",
@@ -25,9 +27,14 @@ const configure = async () => {
     {
       name: "secretAccessKey",
       message: "Please enter your secret access key:",
-  },
+    },
+    {
+      name: "cloudfrontARN",
+      message: "Please enter the ARN of a currently running CloudFront Distribution:",
+    },
 ]);
-console.log(answers.accessKey, answers.secretAccessKey);
+console.log(answers.accessKey, answers.secretAccessKey, answers.cloudfrontARN);
+fs.writeFileSync('./fake-aws-creds.json', JSON.stringify({accessKey: answers.accessKey, secretAccessKey: answers.secretAccessKey, cloudfrontARN: answers.cloudfrontARN}, null, 2))
 }
 
 program
