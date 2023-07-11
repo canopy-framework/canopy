@@ -3,6 +3,7 @@
 const inquirer = require('inquirer');
 const program = require('commander');
 const fs = require('fs');
+const { canopyLogo } = require('./canopy-logo');
 
 
 program.description('Canopy Infrastructure Management API');
@@ -10,6 +11,7 @@ program.name('Canopy');
 
 const deploy = () => {
   console.log("Deploying AWS infrastructure necessary to run Canopy");
+  console.log(canopyLogo);
 }
 
 const destroy = () => {
