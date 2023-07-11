@@ -25,15 +25,15 @@ const envJason = { account: '126159759664', region: 'us-east-2' };
 
 
 
-const sharedResources = new SharedResources(app, 'shared-resources', {
-  env: envJason
-});
+// const sharedResources = new SharedResources(app, 'shared-resources', {
+//   env: envJason
+// });
 
-new VectorAwsStack(app, 'vector-service', {
-  CLUSTER: sharedResources.cluster,
-  VPC: sharedResources.vpc,
-  env: envJason
-});
+// new VectorAwsStack(app, 'vector-service', {
+//   CLUSTER: sharedResources.cluster,
+//   VPC: sharedResources.vpc,
+//   env: envJason
+// });
 
 new EC2_Backend_Deployment(app, "EC2-Backend-deployment", {
   env: envJason
