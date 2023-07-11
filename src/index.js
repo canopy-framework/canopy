@@ -4,6 +4,8 @@ const inquirer = require('inquirer');
 const program = require('commander');
 const fs = require('fs');
 const { canopyLogo } = require('./canopy-logo');
+const gradient = require('gradient-string');
+
 
 
 program.description('Canopy Infrastructure Management API');
@@ -11,7 +13,7 @@ program.name('Canopy');
 
 const deploy = () => {
   console.log("Deploying AWS infrastructure necessary to run Canopy");
-  console.log(canopyLogo);
+  console.log(gradient.atlas(canopyLogo));
 }
 
 const destroy = () => {
