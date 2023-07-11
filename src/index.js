@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
+const inquirer = require('inquirer');
 const program = require('commander');
+
 
 program.description('Canopy Infrastructure Management API');
 program.name('Canopy');
@@ -14,9 +16,18 @@ const destroy = () => {
 }
 
 
-const configure = (options) => {
-  console.log("You have submitted your AWS credentials successfully.");
-  console.log("access key", options.accessKey, "secret password", options.secretPassword);
+const configure = async () => {
+  const answers = await inquirer.prompt([
+    {
+        name: "accessKey",
+        message: "Please enter your access key:",
+    },
+    {
+      name: "secretAccessKey",
+      message: "Please enter your secret access key:",
+  },
+]);
+console.log(answers.accessKey, answers.secretAccessKey);
 }
 
 program
@@ -31,8 +42,6 @@ program
 
 program
   .command('configure')
-  .requiredOption('-ak, --accessKey <key>', 'Access Key')
-  .requiredOption('-sp, --secretPassword <password>', 'Secret Password')
   .description("Configure your AWS credentials")
   .action(configure);
 
