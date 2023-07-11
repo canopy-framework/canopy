@@ -5,21 +5,26 @@ const program = require('commander');
 const fs = require('fs');
 const { canopyLogo } = require('./canopy-logo');
 const gradient = require('gradient-string');
-
+const ora = require('ora-classic');
 
 
 program.description('Canopy Infrastructure Management API');
 program.name('Canopy');
 
-const deploy = () => {
+const deploy = async () => {
   console.log("Deploying AWS infrastructure necessary to run Canopy");
   console.log(gradient.atlas(canopyLogo));
+  const spinner = ora({ text: "Provisioning your AWS Infrastructure" }).start();
+  // represents the actual provisioning
+  await new Promise((resolve, reject) => {
+    setTimeout(() => resolve(console.log()), 2000)
+  });
+  spinner.stopAndPersist({symbol: "✔️", text: "Infrastructure Deployed"})
 }
 
 const destroy = () => {
   console.log("Destroying Canopy AWS infrastructure");
 }
-
 
 const configure = async () => {
   // need to add validation
