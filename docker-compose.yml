@@ -23,14 +23,14 @@ services:
         soft: 262144
         hard: 262144
   grafana:
-    depends_on: clickhouse
-    condition: service_healthy
+    depends_on: 
+      - clickhouse
     image: amazingjason/canopy-grafana:latest
     container_name: grafana
     volumes:
       - grafana_data:/var/lib/grafana
     ports:
-      - 3001:3000
+      - 3000:3000
 
 volumes:
   db_data:
