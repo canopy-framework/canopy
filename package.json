@@ -2,7 +2,8 @@
   "name": "canopy-cli",
   "version": "0.1.0",
   "bin": {
-    "cdk": "bin/canopy-cli.js"
+    "cdk": "bin/canopy-cli.js",
+    "canopy": "./src/index.js"
   },
   "scripts": {
     "build": "echo \"The build step is not required when using JavaScript!\" && exit 0",
