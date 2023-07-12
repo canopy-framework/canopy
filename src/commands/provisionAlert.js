@@ -1,4 +1,15 @@
 const inquirer = require('inquirer');
+const axios = require('axios');
+const user = "admin";
+const password = "admin";
+// admin:admin@Localhost:3000
+const scheme = "http://"
+const host = "localhost";
+const port = 3000;
+const createAlertPath = "/api/v1/provisioning/alert-rules";
+const getDataSourceUIDPath = "/api/datasources/name/ClickHouse"
+const ruleGroup = "pre-configured"; 
+
 /*
 Here, you can either include options, which is probably how we will use this command from the Dashboard. If you don't include options, you are show a prompt where you can choose which alerts you want to set up. 
 */
@@ -37,9 +48,18 @@ const provisionAlert = async (options) => {
     ]);
     // standardize `alerts` so that it looks the same as if the options were used, an object with 
     alertsSelected.alerts.forEach(alertName => alerts[alertName] = true);
-
   }
+  // at this point, `alerts` is in this format { Alert2: true, Alert4: true }
+  // from here, we want to make the actual alert
+  // Steps: get datasource, check for folder, make request
 
+  let datasourceUID
+  await axios
+    .get(`${scheme}${user}:${password}@${host}:${port}${getDataSourceUIDPath}`)
+    .then((result) => {
+      datasourceUID = result.data.uid;
+    })
+    .catch((err) => console.log(err.response.data.message));
   console.log(alerts);
 }
 
