@@ -1,33 +1,13 @@
 #!/usr/bin/env node
 
-const inquirer = require('inquirer');
 const program = require('commander');
-const fs = require('fs');
+
 const { deploy } = require('./commands/deploy');
 const { destroy } = require('./commands/destroy');
+const { configure } = require('./commands/configure');
 
 program.description('Canopy Infrastructure Management API');
 program.name('Canopy');
-
-const configure = async () => {
-  // need to add validation
-  const answers = await inquirer.prompt([
-    {
-        name: "accessKey",
-        message: "Please enter your access key:",
-    },
-    {
-      name: "secretAccessKey",
-      message: "Please enter your secret access key:",
-    },
-    {
-      name: "cloudfrontARN",
-      message: "Please enter the ARN of a currently running CloudFront Distribution:",
-    },
-]);
-console.log(answers.accessKey, answers.secretAccessKey, answers.cloudfrontARN);
-fs.writeFileSync('./fake-aws-creds.json', JSON.stringify({accessKey: answers.accessKey, secretAccessKey: answers.secretAccessKey, cloudfrontARN: answers.cloudfrontARN}, null, 2))
-}
 
 program
   .command('deploy')
