@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   vector:
-    image: amazingjason/canopy-vector:latest
+    image: amazingjason/canopy-vector-firehose:latest
     container_name: vector
     volumes:
       - vector_data:/var/lib/vector
@@ -27,6 +27,9 @@ services:
       - clickhouse
     image: amazingjason/canopy-grafana:latest
     container_name: grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
+    user: ':'
     volumes:
       - grafana_data:/var/lib/grafana
     ports:
