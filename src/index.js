@@ -4,16 +4,10 @@ const inquirer = require('inquirer');
 const program = require('commander');
 const fs = require('fs');
 const { deploy } = require('./commands/deploy');
-
+const { destroy } = require('./commands/destroy');
 
 program.description('Canopy Infrastructure Management API');
 program.name('Canopy');
-
-
-
-const destroy = () => {
-  console.log("Destroying Canopy AWS infrastructure");
-}
 
 const configure = async () => {
   // need to add validation
