@@ -74,6 +74,30 @@ const getFolderUID = async () => {
   }
 }
 
+const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
+  let body = alertTemplate;
+  body.data[0]["datasourceUid"] = datasourceUID;
+  body.data[0]["model"]["datasource"]["uid"] = datasourceUID;
+  body.folderUID = folderUID;
+  body.ruleGroup = ruleGroup;
+  return body;
+}
+
+const createAlert = (body) => {
+  return axios
+    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}`, {...body}, {
+      headers: {
+      'Content-Type': 'application/json',
+      'X-Disable-Provenance': '',
+      }
+  })
+    .then((result)=> console.log(result.data))
+    .catch((err) => {
+      console.log("There was an error creating the alert.");
+      console.log(err);
+    })
+}
+
 const provisionAlert = async (options) => {
   let alerts = options;
   if (Object.keys(alerts).length === 0) {
@@ -113,28 +137,15 @@ const provisionAlert = async (options) => {
   // get datasource UID
   const datasourceUID = await getDataSourceUID();
 
-  // check for preconfigured folder, if it isn't there, make it
+  // check for preconfigured folder, if it isn't there, make it, get UID
   const folderUID = await getFolderUID();
 
-  // make request to create the alert
-  // what do we need here? get the object, set the datasource in both spots, folder, rule group
+  // prepare the body to be sent with the post request
+  const body = prepareAlertTemplate(datasourceUID, folderUID, alert1Template);
 
-  let body = alert1Template;
-  body.data[0]["datasourceUid"] = datasourceUID;
-  body.data[0]["model"]["datasource"]["uid"] = datasourceUID;
-  body.folderUID = folderUID;
-  body.ruleGroup = ruleGroup;
-
-  // remember the provenance header
-  await axios
-    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}`, {...body}, {
-      headers: {
-      'Content-Type': 'application/json',
-      'X-Disable-Provenance': '',
-      }
-  })
-    .then((result)=> console.log(result))
-    .catch((err) => console.log(err))
+  // send the post request
+  await createAlert(body);
+  
 
 }
 
