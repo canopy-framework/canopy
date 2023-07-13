@@ -15,6 +15,52 @@ const folderName = "Pre-Configured Alerts";
 Here, you can either include options, which is probably how we will use this command from the Dashboard. If you don't include options, you are show a prompt where you can choose which alerts you want to set up. 
 */
 
+const getDataSourceUID = () => {
+  return axios
+    .get(`${scheme}${user}:${password}@${host}:${port}${getDataSourceUIDPath}`)
+    .then((result) => {
+      return result.data.uid;
+    })
+    .catch((err) => {
+      // make sure the CLI app stops here 
+      console.log("There was an error fetching the datasource.")
+      console.log(err.response.data.message)
+    });
+}
+
+const getFolderUID = async () => {
+  // get all folders
+  const folders = await axios
+    .get(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`)
+    .then((result) => {
+      return result.data;
+    })
+    .catch((err) => {
+      console.log(`There was an error fetching the ${folderName} folder uid.`)
+      console.log(err.response.data.message)
+    });
+
+  // check to see if we made the folder already
+  let preconfigFolder = folders.find(folderObj => folderObj.title === folderName);
+
+  // if the folder exists, return the uid
+  if (preconfigFolder) {
+    return preconfigFolder.uid;
+  } else { // the folder does not exist, create it and return the uid
+    preconfigFolder = await axios
+      .post(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`, {
+        title: folderName,
+      })
+      .then((result) => result.data)
+      .catch((err) => {
+        console.log(`There was an error creating the ${folderName} folder`)
+        console.log(err.response.data.message);
+      });
+    console.log("this is what gets returned when you create a folder", preconfigFolder);
+    return preconfigFolder.uid;
+  }
+}
+
 const provisionAlert = async (options) => {
   let alerts = options;
   if (Object.keys(alerts).length === 0) {
@@ -54,37 +100,14 @@ const provisionAlert = async (options) => {
   // from here, we want to make the actual alert
   // Steps: get datasource, check for folder, make request
   
-// get datasource UID
-  const datasourceUID = await axios
-    .get(`${scheme}${user}:${password}@${host}:${port}${getDataSourceUIDPath}`)
-    .then((result) => {
-      return result.data.uid;
-    })
-    .catch((err) => console.log(err.response.data.message));
+  // get datasource UID
+  const datasourceUID = await getDataSourceUID();
 
   // check for preconfigured folder, if it isn't there, make it
+  const folderUID = await getFolderUID();
 
-  const folders = await axios
-    .get(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`)
-    .then((result) => {
-      return result.data;
-    })
-    .catch((err) => console.log(err.response.data.message));
-  
-  const preconfigFolderExists = folders.find(folderObj => folderObj.title === folderName);
-
-  // if the folder doesn't exist, create it
-  if (!preconfigFolderExists) {
-    await axios.post(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`, {
-      title: folderName,
-    })
-    console.log("created folder")
-  } else { // it does exist, so we must have the uid stored somewhere, or just store it somewhere
-    console.log("exists already");
-  }
-
-  console.log("preconfig folder exists", !!preconfigFolderExists);
-  
+  console.log("datasource uid", datasourceUID);
+  console.log("folder uid after all", folderUID);
   console.log(alerts);
 }
 
