@@ -7,9 +7,10 @@ const scheme = "http://"
 const host = "localhost";
 const port = 3000;
 const createAlertPath = "/api/v1/provisioning/alert-rules";
-const getDataSourceUIDPath = "/api/datasources/name/ClickHouse"
+const getDataSourceUIDPath = "/api/datasources/name/ClickHouse";
+const getFoldersPath = "/api/folders";
 const ruleGroup = "pre-configured"; 
-
+const folderName = "Pre-Configured Alerts";
 /*
 Here, you can either include options, which is probably how we will use this command from the Dashboard. If you don't include options, you are show a prompt where you can choose which alerts you want to set up. 
 */
@@ -52,14 +53,38 @@ const provisionAlert = async (options) => {
   // at this point, `alerts` is in this format { Alert2: true, Alert4: true }
   // from here, we want to make the actual alert
   // Steps: get datasource, check for folder, make request
-
-  let datasourceUID
-  await axios
+  
+// get datasource UID
+  const datasourceUID = await axios
     .get(`${scheme}${user}:${password}@${host}:${port}${getDataSourceUIDPath}`)
     .then((result) => {
-      datasourceUID = result.data.uid;
+      return result.data.uid;
     })
     .catch((err) => console.log(err.response.data.message));
+
+  // check for preconfigured folder, if it isn't there, make it
+
+  const folders = await axios
+    .get(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`)
+    .then((result) => {
+      return result.data;
+    })
+    .catch((err) => console.log(err.response.data.message));
+  
+  const preconfigFolderExists = folders.find(folderObj => folderObj.title === folderName);
+
+  // if the folder doesn't exist, create it
+  if (!preconfigFolderExists) {
+    await axios.post(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`, {
+      title: folderName,
+    })
+    console.log("created folder")
+  } else { // it does exist, so we must have the uid stored somewhere, or just store it somewhere
+    console.log("exists already");
+  }
+
+  console.log("preconfig folder exists", !!preconfigFolderExists);
+  
   console.log(alerts);
 }
 
