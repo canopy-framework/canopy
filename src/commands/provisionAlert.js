@@ -1,16 +1,12 @@
 const inquirer = require('inquirer');
 const axios = require('axios');
-const user = "admin";
-const password = "admin";
-const scheme = "http://"
-const host = "localhost";
-const port = 3000;
-const createAlertPath = "/api/v1/provisioning/alert-rules";
-const getDataSourceUIDPath = "/api/datasources/name/ClickHouse";
-const getFoldersPath = "/api/folders";
-const ruleGroup = "pre-configured"; 
-const folderName = "Pre-Configured Alerts";
 const { alertTemplates } = require('../constants/alertTemplates');
+const fs = require('fs');
+const path = require('path');
+
+const { createAlertPath, getDataSourceUIDPath, getFoldersPath, user, password, scheme, host, port, ruleGroup, folderName } = JSON.parse(fs.readFileSync(path.join(__dirname, '/../constants/grafana-config.json')));
+
+
 
 /*
 Here, you can either include options, which is probably how we will use this command from the Dashboard. If you don't include options, you are show a prompt where you can choose which alerts you want to set up. 
@@ -104,19 +100,19 @@ const provisionAlert = async (options) => {
         message: "Add any of the below alerts",
         choices: [
           {
-            name: "Add an alert that will fire when latency remains elevated for 5 minutes",
+            name: "Add an alert for latency",
             value: "Alert1"
           },
           {
-            name: "Option 2",
+            name: "Add an alert for the cache-hit ratio",
             value: "Alert2"
           },
           {
-            name: "Option 3",
+            name: "Add an alert for bandwidth",
             value: "Alert3"
           },
           {
-            name: "Option 4",
+            name: "Add an alert for the error rate",
             value: "Alert4"
           },
         ]
