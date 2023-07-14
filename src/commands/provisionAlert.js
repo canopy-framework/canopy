@@ -51,26 +51,6 @@ const getFolderUID = async () => {
 
 const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
   let body = alertTemplate;
-/*
-// time taken template
-// body.data[0]["datasourceUid"]
-// body.data[0]["model"]["datasource"]["uid"]
-
-// Bandwidth Template
-// body.data[0]["datasourceUid"]
-// body.data[0]["model"]["datasource"]["uid"]
-
-// Error Rate
-// body.data[0]["datasourceUid"]
-// body.data[1]["datasourceUid"]
-// body.data[1]["model"]["datasource"]["uid"]
-
-// Cache hit < 50% template
-// body.data[0]["datasourceUid"]
-// body.data[0]["model"]["datasource"]["uid"]
-// body.data[1]["datasourceUid"]
-// body.data[1]["model"]["datasource"]["uid"]
-*/
 
   body.data[0]["datasourceUid"] = datasourceUID;
 
