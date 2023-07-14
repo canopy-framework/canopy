@@ -64,8 +64,16 @@ const getFolderUID = async () => {
 
 const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
   let body = alertTemplate;
-  body.data[0]["datasourceUid"] = datasourceUID;
-  body.data[0]["model"]["datasource"]["uid"] = datasourceUID;
+  let index = 0;
+  body.data[index]["datasourceUid"] = datasourceUID; // this still happens
+  
+  if (body.data[index]["model"]["datasource"] === undefined) {
+    index = 1;
+    body.data[index]["datasource"] = datasourceUID; // this needs to happen
+  }
+
+  body.data[index]["model"]["datasource"]["uid"] = datasourceUID; // this fails
+  
   body.folderUID = folderUID;
   body.ruleGroup = ruleGroup;
   return body;
@@ -82,7 +90,7 @@ const createAlert = (body) => {
     .then((result)=> console.log(result.data))
     .catch((err) => {
       console.log("There was an error creating the alert.");
-      console.log(err);
+      console.log(err.response.data.message);
     })
 }
 
@@ -111,10 +119,6 @@ const provisionAlert = async (options) => {
             name: "Option 4",
             value: "Alert4"
           },
-          {
-            name: "Option 5",
-            value: "Alert5"
-          }, 
         ]
       },
     ]);
@@ -128,13 +132,19 @@ const provisionAlert = async (options) => {
   // check for preconfigured folder, if it isn't there, make it, get UID
   const folderUID = await getFolderUID();
 
-  // prepare the body to be sent with the post request
-  const body = prepareAlertTemplate(datasourceUID, folderUID, alert1Template);
-
-  // send the post request
-  await createAlert(body);
+  // list of alerts is in the alerts variable, its an object 
+  //{ Alert1: true, Alert2: true }
   
-
+  // for loop over object keys of alerts
+    // find right template
+    // generate body
+    // send post request
+  let alertNames = Object.keys(alerts);
+  for (let i = 0; i < alertNames.length; i++) {
+    const template = alertTemplates[alertNames[i]];
+    const body = prepareAlertTemplate(datasourceUID, folderUID, template);
+    await createAlert(body);
+  }
 }
 
 module.exports = { provisionAlert };
