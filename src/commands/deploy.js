@@ -12,7 +12,8 @@ const deploy = async () => {
     setTimeout(() => resolve(console.log()), 2000)
   });
 
-  spinner.stopAndPersist({symbol: "✔️", text: "Infrastructure Deployed"})
+  // spinner.stopAndPersist({symbol: "✔️", text: "Infrastructure Deployed"})
+  spinner.succeed();
 }
 
 module.exports = { deploy };
