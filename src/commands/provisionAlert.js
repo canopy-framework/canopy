@@ -6,12 +6,6 @@ const path = require('path');
 
 const { createAlertPath, getDataSourceUIDPath, getFoldersPath, user, password, scheme, host, port, ruleGroup, folderName } = JSON.parse(fs.readFileSync(path.join(__dirname, '/../constants/grafana-config.json')));
 
-
-
-/*
-Here, you can either include options, which is probably how we will use this command from the Dashboard. If you don't include options, you are show a prompt where you can choose which alerts you want to set up. 
-*/
-
 const getDataSourceUID = () => {
   return axios
     .get(`${scheme}${user}:${password}@${host}:${port}${getDataSourceUIDPath}`)
