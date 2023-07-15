@@ -1,0 +1,12 @@
+{
+"createAlertPath": "/api/v1/provisioning/alert-rules",
+"getDataSourceUIDPath": "/api/datasources/name/ClickHouse",
+"getFoldersPath": "/api/folders",
+"user": "admin",
+"password": "admin",
+"scheme": "http://",
+"host": "localhost",
+"port": 3000,
+"ruleGroup": "pre-configured",
+"folderName": "Pre-Configured Alerts"
+}
