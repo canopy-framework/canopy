@@ -15,7 +15,7 @@ const getDataSourceUID = () => {
     })
     .catch((err) => {
       console.log("There was an error fetching the datasource.")
-      console.log(err.response.data.message)
+      // console.log(err);
     });
 }
 
@@ -27,7 +27,7 @@ const getFolderUID = async () => {
     })
     .catch((err) => {
       console.log(`There was an error fetching the ${folderName} folder uid.`)
-      console.log(err.response.data.message)
+      // console.log(err.response.data.message)
     });
 
   let preconfigFolder = folders.find(folderObj => folderObj.title === folderName);
@@ -42,7 +42,7 @@ const getFolderUID = async () => {
       .then((result) => result.data)
       .catch((err) => {
         console.log(`There was an error creating the ${folderName} folder`)
-        console.log(err.response.data.message);
+        // console.log(err.response.data.message);
       });
 
     return preconfigFolder.uid;
@@ -74,7 +74,7 @@ const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
 const createAlert = (body) => {
   const spinner = ora({ text: `Creating the alert ${body.title}` }).start();
   return axios
-    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}`, {...body}, {
+    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}s`, {...body}, {
       headers: {
       'Content-Type': 'application/json',
       'X-Disable-Provenance': '',
@@ -84,8 +84,7 @@ const createAlert = (body) => {
       spinner.succeed();
     })
     .catch((err) => {
-      console.log("There was an error creating the alert.");
-      console.log(err.response.data.message);
+      // console.log(err);
       spinner.fail();
     })
 }
