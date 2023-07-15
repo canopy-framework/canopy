@@ -74,7 +74,7 @@ const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
 const createAlert = (body) => {
   const spinner = ora({ text: `Creating the alert ${body.title}` }).start();
   return axios
-    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}s`, {...body}, {
+    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}`, {...body}, {
       headers: {
       'Content-Type': 'application/json',
       'X-Disable-Provenance': '',
