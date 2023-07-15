@@ -9,10 +9,9 @@ const deploy = async () => {
   
   // represents the actual provisioning
   await new Promise((resolve, reject) => {
-    setTimeout(() => resolve(console.log()), 2000)
+    setTimeout(() => resolve(), 2000)
   });
 
-  // spinner.stopAndPersist({symbol: "✔️", text: "Infrastructure Deployed"})
   spinner.succeed();
 }
 
