@@ -3,7 +3,7 @@ const cdk = require('aws-cdk-lib');
 const { CdkStack } = require('../lib/cdk-stack');
 const { SharedResources, VectorAwsStack } = require('../lib/backend-stack');
 const { EC2_Backend_Deployment } = require("../lib/ec2-backend-stack");
-const AWSConfig = require('../src/aws-config.json');
+const AWSConfig = require('../aws-config.json');
 
 const app = new cdk.App();
 const env = { account: AWSConfig.accountNumber, region: AWSConfig.region };
