@@ -31,6 +31,7 @@ const deploy = async () => {
   } catch (error) {
     configSpinner.fail('Real-time log configuration setup failed.');
     console.log(error)
+  }
 }
 
 module.exports = { deploy };
