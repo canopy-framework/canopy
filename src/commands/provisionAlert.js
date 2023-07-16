@@ -1,50 +1,19 @@
 const inquirer = require('inquirer');
-const axios = require('axios');
 const { alertTemplates } = require('../constants/alertTemplates');
 const fs = require('fs');
 const path = require('path');
-const ora = require('ora-classic');
+const { getDataSourceUID, createAlert, getListOfFolders, createFolder } = require('../services/grafana');
 
-const { createAlertPath, getDataSourceUIDPath, getFoldersPath, user, password, scheme, host, port, ruleGroup, folderName } = JSON.parse(fs.readFileSync(path.join(__dirname, '/../constants/grafana-config.json')));
-
-const getDataSourceUID = () => {
-  return axios
-    .get(`${scheme}${user}:${password}@${host}:${port}${getDataSourceUIDPath}`)
-    .then((result) => {
-      return result.data.uid;
-    })
-    .catch((err) => {
-      console.log("There was an error fetching the datasource.")
-      // console.log(err);
-    });
-}
+const { ruleGroup, folderName } = JSON.parse(fs.readFileSync(path.join(__dirname, '/../constants/grafana-config.json')));
 
 const getFolderUID = async () => {
-  const folders = await axios
-    .get(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`)
-    .then((result) => {
-      return result.data;
-    })
-    .catch((err) => {
-      console.log(`There was an error fetching the ${folderName} folder uid.`)
-      // console.log(err.response.data.message)
-    });
-
+  const folders = await getListOfFolders();
   let preconfigFolder = folders.find(folderObj => folderObj.title === folderName);
 
   if (preconfigFolder) {
     return preconfigFolder.uid;
   } else {
-    preconfigFolder = await axios
-      .post(`${scheme}${user}:${password}@${host}:${port}${getFoldersPath}`, {
-        title: folderName,
-      })
-      .then((result) => result.data)
-      .catch((err) => {
-        console.log(`There was an error creating the ${folderName} folder`)
-        // console.log(err.response.data.message);
-      });
-
+    preconfigFolder = await createFolder();
     return preconfigFolder.uid;
   }
 }
@@ -69,24 +38,6 @@ const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
   body.ruleGroup = ruleGroup;
   
   return body;
-}
-
-const createAlert = (body) => {
-  const spinner = ora({ text: `Creating the alert ${body.title}` }).start();
-  return axios
-    .post(`${scheme}${user}:${password}@${host}:${port}${createAlertPath}s`, {...body}, {
-      headers: {
-      'Content-Type': 'application/json',
-      'X-Disable-Provenance': '',
-      }
-  })
-    .then((result)=> {
-      spinner.succeed();
-    })
-    .catch((err) => {
-      // console.log(err);
-      spinner.fail();
-    })
 }
 
 const provisionAlert = async (options) => {
