@@ -28,11 +28,10 @@ program
 program
   .command('alert')
   .description('Add pre-configured alerts to your Grafana instance')
-  .option('-1, -alert1', 'Add an alert that will fire when latency remains elevated for 5 minutes')
-  .option('-2, -alert2', 'Alert 2')
-  .option('-3, -alert3', 'Alert 3')
-  .option('-4, -alert4', 'Alert 4')
-  .option('-5, -alert5', 'Alert 5')
-  .action(provisionAlert)
+  .option('-1, -alert1', 'Add an alert for latency')
+  .option('-2, -alert2', 'Add an alert for the cache-hit ratio')
+  .option('-3, -alert3', 'Add an alert for bandwidth')
+  .option('-4, -alert4', 'Add an alert for the error rate')
+  .action(provisionAlert);
 
 program.parse(process.argv);

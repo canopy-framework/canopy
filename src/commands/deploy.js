@@ -30,8 +30,7 @@ const deploy = async () => {
     configSpinner.succeed('Real-time logging enabled for CloudFront distribution');
   } catch (error) {
     configSpinner.fail('Real-time log configuration setup failed.');
-    console.log(error);
-  }
+    console.log(error)
 }
 
 module.exports = { deploy };
