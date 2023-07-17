@@ -12,10 +12,11 @@ async function validHttpEndpoint(endpoint) {
 
 const configure = async (options) => {
   // need to add validation
-  // make it so answers looks exactly the same if options are passed in or if the prompt is used
-  let answers = options;
-  if (Object.keys(answers).length === 0) {
-    const promptAnswers = await inquirer.prompt([
+
+  let answers = {};
+
+  if (Object.keys(options).length === 0) {
+    answers = await inquirer.prompt([
       {
         name: "accountNumber",
         message: "Please enter your AWS account number:",
@@ -42,62 +43,44 @@ const configure = async (options) => {
         message: "Please enter your AWS region:"
       },
     ]);
-
-    console.log(promptAnswers);
-    // {
-    //   accountNumber: '123',
-    //   distributionId: '123',
-    //   httpEndpoint: 'https://asdf',
-    //   accessKeyId: '3',
-    //   secretAccessKey: '3',
-    //   region: '3'
-    // }
-
-    console.log();
   }
-  console.log(options);
 
-  // {
-  //   AccountNumber: 'as',
-  //   DistributionID: 'as',
-  //   HTTPEndpoint: 'a',
-  //   SecretKey: '3',
-  //   Region: '3',
-  //   AccessKeyID: '234'
-  // }
+  Object.keys(options).forEach((key) => {
+    const lowerCaseKey = key[0].toLowerCase() + key.slice(1);
+    answers[lowerCaseKey] = options[key]
+  })
 
+  console.log(answers.accountNumber, answers.distributionId, answers.httpEndpoint, answers.accessKeyId, answers.secretAccessKey, answers.region);
 
-//   console.log(answers.accountNumber, answers.distributionId, answers.httpEndpoint, answers.accessKeyId, answers.secretAccessKey, answers.region);
-
-//   fs.writeFileSync('./aws-config.json', JSON.stringify({
-//     accountNumber: answers.accountNumber,
-//     distributionId: answers.distributionId,
-//     httpEndpoint: answers.httpEndpoint,
-//     region: answers.region,
-//   }, null, 2));
+  fs.writeFileSync('./aws-config.json', JSON.stringify({
+    accountNumber: answers.accountNumber,
+    distributionId: answers.distributionId,
+    httpEndpoint: answers.httpEndpoint,
+    region: answers.region,
+  }, null, 2));
   
-//   // Commands for configuring AWS credentials & bootstrapping
-//   const configureAccessKeyId = `aws configure set aws_access_key_id ${answers.accessKeyId}`;
-//   const configureSecretKey = `aws configure set aws_secret_access_key ${answers.secretAccessKey}`;
-//   const configureRegion = `aws configure set region ${answers.region}`;
-//   const configureNginx = `node create_nginx_config.js ${answers.httpEndpoint.replace(/^https:\/\//, '')}`;
-//   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
+  // Commands for configuring AWS credentials & bootstrapping
+  const configureAccessKeyId = `aws configure set aws_access_key_id ${answers.accessKeyId}`;
+  const configureSecretKey = `aws configure set aws_secret_access_key ${answers.secretAccessKey}`;
+  const configureRegion = `aws configure set region ${answers.region}`;
+  const configureNginx = `node create_nginx_config.js ${answers.httpEndpoint.replace(/^https:\/\//, '')}`;
+  const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
   
-//   // Execute above commands
-//   await exec(configureAccessKeyId);
-//   await exec(configureSecretKey);
-//   await exec(configureRegion);
-//   await exec(configureNginx);
+  // Execute above commands
+  await exec(configureAccessKeyId);
+  await exec(configureSecretKey);
+  await exec(configureRegion);
+  await exec(configureNginx);
 
-//   // Bootstrap AWS environment with CDK resources
-//   const spinner = ora('Bootstrapping AWS environment with CDK resources').start();
-//   try {
-//     await exec(bootstrap);
-//     spinner.succeed('Bootstrapping successful. You are now ready for deployment.');
-//   } catch (error) {
-//     spinner.fail('Bootstrapping failed.')
-//     console.log(error);
-//   }
+  // Bootstrap AWS environment with CDK resources
+  const spinner = ora('Bootstrapping AWS environment with CDK resources').start();
+  try {
+    await exec(bootstrap);
+    spinner.succeed('Bootstrapping successful. You are now ready for deployment.');
+  } catch (error) {
+    spinner.fail('Bootstrapping failed.')
+    console.log(error);
+  }
 }
 
 module.exports = { configure };

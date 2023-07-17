@@ -23,10 +23,10 @@ program
 program
   .command('configure')
   .option('-an, -accountNumber <accountNumber>', 'Configure your account number')
-  .option('-dID, -distributionID <distributionID>', 'Configure your CloudFront distribution ID')
-  .option('-ep, -HTTPEndpoint <endpoint>', 'Configure your http endpoint')
-  .option('-ak, -accessKeyID <accessKeyID>', 'Configure your AWS access key id')
-  .option('-sk, -secretKey <secretKey>', 'Configure your AWS secret access key')
+  .option('-dID, -distributionId <distributionId>', 'Configure your CloudFront distribution ID')
+  .option('-ep, -httpEndpoint <httpEndpoint>', 'Configure your http endpoint')
+  .option('-ak, -accessKeyId <accessKeyId>', 'Configure your AWS access key id')
+  .option('-sk, -secretAccessKey <secretAccessKey>', 'Configure your AWS secret access key')
   .option('-r, -region <region>', 'Configure your AWS region')
   .description("Configure your AWS credentials")
   .action(configure);
