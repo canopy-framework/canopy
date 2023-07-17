@@ -10,36 +10,48 @@ async function validHttpEndpoint(endpoint) {
   return regex.test(endpoint);
 }
 
-const configure = async () => {
+const configure = async (options) => {
   // need to add validation
-  
-  const answers = await inquirer.prompt([
-    {
-      name: "accountNumber",
-      message: "Please enter your AWS account number:",
-    },
-    {
-      name: "distributionId",
-      message: "Please enter your CloudFront distribution ID:",
-    },
-    {
-      name: "httpEndpoint",
-      message: "Please enter an HTTP endpoint for Firehose delivery (format: https://xyz.httpendpoint.com):",
-      validate: validHttpEndpoint,
-    },
-    {
-      name: "accessKeyId",
-      message: "Please enter your AWS access key ID:",
-    },
-    {
-      name: "secretAccessKey",
-      message: "Please enter your AWS secret access key:",
-    },
-    {
-      name: "region",
-      message: "Please enter your AWS region:"
-    },
-]);
+  const numOfOptions = Object.keys(options).length;
+  let answers = {};
+
+  if (numOfOptions > 0 && numOfOptions < 6) {
+    console.log("You must pass in all options");
+    process.exit(0);
+  } else if (numOfOptions === 0) {
+    answers = await inquirer.prompt([
+      {
+        name: "accountNumber",
+        message: "Please enter your AWS account number:",
+      },
+      {
+        name: "distributionId",
+        message: "Please enter your CloudFront distribution ID:",
+      },
+      {
+        name: "httpEndpoint",
+        message: "Please enter an HTTP endpoint for Firehose delivery (format: https://xyz.httpendpoint.com):",
+        validate: validHttpEndpoint,
+      },
+      {
+        name: "accessKeyId",
+        message: "Please enter your AWS access key ID:",
+      },
+      {
+        name: "secretAccessKey",
+        message: "Please enter your AWS secret access key:",
+      },
+      {
+        name: "region",
+        message: "Please enter your AWS region:"
+      },
+    ]);
+  }
+
+  Object.keys(options).forEach((key) => {
+    const lowerCaseKey = key[0].toLowerCase() + key.slice(1);
+    answers[lowerCaseKey] = options[key]
+  })
 
   console.log(answers.accountNumber, answers.distributionId, answers.httpEndpoint, answers.accessKeyId, answers.secretAccessKey, answers.region);
 
