@@ -12,10 +12,13 @@ async function validHttpEndpoint(endpoint) {
 
 const configure = async (options) => {
   // need to add validation
-
+  const numOfOptions = Object.keys(options).length;
   let answers = {};
 
-  if (Object.keys(options).length === 0) {
+  if (numOfOptions > 0 && numOfOptions < 6) {
+    console.log("You must pass in all options");
+    process.exit(0);
+  } else if (numOfOptions === 0) {
     answers = await inquirer.prompt([
       {
         name: "accountNumber",
