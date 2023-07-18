@@ -21,7 +21,8 @@ const getDataSourceUID = () => {
       return result.data.uid;
     })
     .catch((err) => {
-      console.log("There was an error fetching the datasource.")
+      console.log("There was an error fetching the datasource.");
+      process.exit(0);
     });
 }
 
