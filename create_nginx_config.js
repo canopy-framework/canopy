@@ -28,8 +28,13 @@ http {
     include             /etc/nginx/mime.types;
     default_type        application/octet-stream;
 
+    ssl_session_cache shared:le_nginx_SSL:1m;
+    ssl_session_timeout 1440m;
+
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
     ssl_prefer_server_ciphers on;
+
+    gzip on;
 
     server {
         server_name ${domain};
