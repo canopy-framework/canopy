@@ -42,30 +42,14 @@ const prepareAlertTemplate = (datasourceUID, folderUID, alertTemplate) => {
 
 const provisionAlert = async (options) => {
   let alerts = options;
+  const choices = JSON.parse(fs.readFileSync(path.join(__dirname, '/../constants/alert-choices.json')));
   if (Object.keys(alerts).length === 0) {
     const alertsSelected = await inquirer.prompt([
       {   
         type: "checkbox",
         name: "alerts",
         message: "Add any of the below alerts",
-        choices: [
-          {
-            name: "Add an alert for latency",
-            value: "Alert1"
-          },
-          {
-            name: "Add an alert for the cache-hit ratio",
-            value: "Alert2"
-          },
-          {
-            name: "Add an alert for bandwidth",
-            value: "Alert3"
-          },
-          {
-            name: "Add an alert for the error rate",
-            value: "Alert4"
-          },
-        ]
+        choices,
       },
     ]);
 
