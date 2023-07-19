@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { exec } from 'child_process';
 import axios from 'axios';
-import { alertTemplates } from '../../alertTemplates';
+import { alertTemplates } from '../../../../src/constants/alertTemplates';
 
 const GRAFANA_PORT = process.env.GRAFANA_PORT;
 const GRAFANA_USERNAME = process.env.GRAFANA_USERNAME;
