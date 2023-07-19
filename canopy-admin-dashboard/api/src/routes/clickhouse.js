@@ -8,7 +8,6 @@ const { clickhousePort, host} = JSON.parse(fs.readFileSync(path.join(__dirname, 
 const router = Router();
 
 const CLICKHOUSE_URL = `http://${host}:${clickhousePort}`;
-console.log("clickhouse url", CLICKHOUSE_URL)
 
 router.get('/stats', async (req, res) => {
   let result;
