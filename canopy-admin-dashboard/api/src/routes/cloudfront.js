@@ -1,12 +1,11 @@
-const AWS_CONFIG_PATH = process.env.AWS_CONFIG_PATH;
 import fs from 'fs';
+import path from 'path';
 import { Router } from 'express';
 
 const router = Router();
 
 const getCloudFrontInfo = () => {
-  const awsConfigData = JSON.parse(fs.readFileSync(AWS_CONFIG_PATH));
-
+  const awsConfigData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'aws-config.json')));
   const info = {};
   try {
     info['distributionId'] = awsConfigData.distributionId;
