@@ -1,12 +1,10 @@
 import { Router } from 'express';
 import { exec } from 'child_process';
 import axios from 'axios';
-import { alertTemplates } from '../../alertTemplates';
-
-const GRAFANA_PORT = process.env.GRAFANA_PORT;
-const GRAFANA_USERNAME = process.env.GRAFANA_USERNAME;
-const GRAFANA_PASSWORD = process.env.GRAFANA_PASSWORD;
-const GRAFANA_HOST = process.env.GRAFANA_HOST;
+import { alertTemplates } from '../../../../src/constants/alertTemplates';
+import fs from 'fs';
+import path from 'path';
+const { port: GRAFANA_PORT, user: GRAFANA_USERNAME,  password: GRAFANA_PASSWORD, host: GRAFANA_HOST} = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/grafana-config.json')));
 
 const router = Router();
 

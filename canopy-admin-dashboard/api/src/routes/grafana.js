@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import 'dotenv/config';
 import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 
-const GRAFANA_PORT = parseInt(process.env.GRAFANA_PORT || '');
-const USERNAME = process.env.GRAFANA_USERNAME || '';
-const PASSWORD = process.env.GRAFANA_PASSWORD || '';
-const BASEURL = 'localhost';
+const { port: GRAFANA_PORT, user: USERNAME,  password: PASSWORD, host: BASEURL} = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/grafana-config.json')));
+
 const GRAFANA_URL = `http://${USERNAME}:${PASSWORD}@${BASEURL}:${GRAFANA_PORT}/api/admin`;
 
 if (!GRAFANA_PORT || !USERNAME || !PASSWORD) {
