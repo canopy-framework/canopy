@@ -1,14 +1,14 @@
 import { Router } from "express";
 import 'dotenv/config';
 import axios from "axios";
+import fs from 'fs';
+import path from 'path';
+const { clickhousePort, host} = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/grafana-config.json')));
 
 const router = Router();
 
-const CLICKHOUSE_PORT = process.env.CLICKHOUSE_PORT;
-const BASEURL = "http://localhost";
-const CLICKHOUSE_URL = `${BASEURL}:${CLICKHOUSE_PORT}`;
-
-
+const CLICKHOUSE_URL = `http://${host}:${clickhousePort}`;
+console.log("clickhouse url", CLICKHOUSE_URL)
 
 router.get('/stats', async (req, res) => {
   let result;

@@ -7,6 +7,7 @@
 "scheme": "http://",
 "host": "localhost",
 "port": 3000,
+"clickhousePort": 9000,
 "ruleGroup": "pre-configured",
 "folderName": "Pre-Configured Alerts"
 }
