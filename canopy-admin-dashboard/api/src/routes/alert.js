@@ -27,24 +27,26 @@ const alertChoices = () => {
 
 // reads the alert descriptions from a JSON file
 const readAlertDescriptions = () => {
-  return [
-    {
-      name: 'Alert for latency',
-      value: 'Alert1'
-    },
-    {
-      name: 'Alert for cache-hit ratio',
-      value: 'Alert2'
-    },
-    {
-      name: 'Alert for bandwidth',
-      value: 'Alert3'
-    },
-    {
-      name: 'Alert for overall error rate',
-      value: 'Alert4'
-    }
-  ];
+  return JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/alert-choices.json')));
+  
+  // return [
+  //   {
+  //     name: 'Alert for latency',
+  //     value: 'Alert1'
+  //   },
+  //   {
+  //     name: 'Alert for cache-hit ratio',
+  //     value: 'Alert2'
+  //   },
+  //   {
+  //     name: 'Alert for bandwidth',
+  //     value: 'Alert3'
+  //   },
+  //   {
+  //     name: 'Alert for overall error rate',
+  //     value: 'Alert4'
+  //   }
+  // ];
 };
 
 const checkIfAlertsAlreadyActive = async (choices) => {
