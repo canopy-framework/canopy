@@ -9,7 +9,7 @@ const app = new cdk.App();
 const env = { account: AWSConfig.accountNumber, region: AWSConfig.region };
 
 new CdkStack(app, 'FirehoseDeliveryStream', { env: env });
-new EC2_Backend_Deployment(app, "EC2-Backend-deployment", { env: env });
+// new EC2_Backend_Deployment(app, "EC2-Backend-deployment", { env: env });
 
 // const sharedResources = new SharedResources(app, 'shared-resources', {
 //   env: envJason
