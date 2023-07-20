@@ -3,13 +3,9 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const AWSConfig = require('../../aws-config.json')
-const { 
-  CloudFrontClient,
-  GetDistributionConfigCommand,
-  UpdateDistributionCommand,
-  DeleteRealtimeLogConfigCommand, 
-} = require("@aws-sdk/client-cloudfront");
+const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand } = require("@aws-sdk/client-cloudfront");
+const iam = require("@aws-sdk/client-iam");
+const AWSConfig = require('../../aws-config.json');
 
 async function confirmDeletion() {
   const question = {
@@ -32,7 +28,7 @@ const destroy = async () => {
     await exec('cdk destroy --all --force');
     destroySpinner.succeed('Canopy AWS Infrastructure successfully deleted.');
   } catch (error) {
-    destroySpinner.fail('Deletion failed.');
+    destroySpinner.fail('Deleting Canopy AWS Infrastructure failed.');
     console.log(error);
   }
 
@@ -44,7 +40,7 @@ const destroy = async () => {
     const distribution = new GetDistributionConfigCommand({ Id: AWSConfig.distributionId });
     const distConfig = await cloudFrontClient.send(distribution);
     
-    // Update current distribution to remove real-time log configuration from cache behavior
+    // Update distribution to remove real-time log configuration from cache behavior
     distConfig.Id = AWSConfig.distributionId;
     distConfig.IfMatch = distConfig.ETag;
     delete distConfig.ETag;
@@ -54,12 +50,29 @@ const destroy = async () => {
     await cloudFrontClient.send(updateConfigCommand);
 
     // Delete real-time log configuration
-    const input = { ARN: realtimeConfigARN };
-    const deleteCommand = new DeleteRealtimeLogConfigCommand(input);
+    const configInput = { ARN: realtimeConfigARN };
+    const deleteCommand = new DeleteRealtimeLogConfigCommand(configInput);
     await cloudFrontClient.send(deleteCommand);
+
+    // Delete IAM role policy
+    const iamClient = new iam.IAMClient(AWSConfig.region);
+    const policyInput = {
+      RoleName: 'CloudFrontRealtimeLogConfigRole-Canopy', 
+      PolicyName: 'CloudFrontRealtimeLogConfigRole-Canopy',
+    };
+    const deletePolicyCommand = new iam.DeleteRolePolicyCommand(policyInput);
+    await iamClient.send(deletePolicyCommand);
+
+    // Delete IAM role
+    const roleInput = {
+      RoleName: 'CloudFrontRealtimeLogConfigRole-Canopy',
+    }
+    const deleteRoleCommand = new iam.DeleteRoleCommand(roleInput);
+    await iamClient.send(deleteRoleCommand);
+
     configSpinner.succeed('Real-time log configuration successfully deleted.');
   } catch(error) {
-    configSpinner.fail('Deletion failed.');
+    configSpinner.fail('Deleting real-time log configuration failed.');
     console.log(error);
   }
 }
