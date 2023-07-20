@@ -6,6 +6,7 @@ const { deploy } = require('./commands/deploy');
 const { destroy } = require('./commands/destroy');
 const { configure } = require('./commands/configure');
 const { provisionAlert } = require('./commands/provisionAlert');
+const { launchDashboard } = require('./commands/launchDashboard');
 
 program.description('Canopy Infrastructure Management API');
 program.name('Canopy');
@@ -39,5 +40,10 @@ program
   .option('-3, -alert3', 'Add an alert for bandwidth')
   .option('-4, -alert4', 'Add an alert for the error rate')
   .action(provisionAlert);
+
+program
+  .command('launchDashboard')
+  .description('Launches Canopy Admin Dashboard')
+  .action(launchDashboard);
 
 program.parse(process.argv);
