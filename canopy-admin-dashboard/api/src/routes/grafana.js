@@ -26,7 +26,7 @@ router.get('/stats', async (req, res) => {
     results = await Promise.all([statsPromise, usagePromise]);
   } catch (error) {
     console.error('Error fetching grafana stats');
-    res.status(500).send(`Error fetching grafana stats: ${error}`);
+    return res.status(500).send(`Error fetching grafana stats: ${error}`);
   }
 
   const stats = results[0];
