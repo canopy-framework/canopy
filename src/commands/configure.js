@@ -78,8 +78,18 @@ const configure = async (options) => {
   // Bootstrap AWS environment with CDK resources
   const spinner = ora('Bootstrapping AWS environment with CDK resources').start();
   try {
-    await exec(bootstrap);
-    spinner.succeed('Bootstrapping successful. You are now ready for deployment.');
+    // await exec(bootstrap);
+    spinner.succeed('Bootstrapping successful.\n');
+
+    const steps = 
+    [`Next steps:`,
+     `1) Place your SSL certificate file in .pem format into the project root directory as "fullchain.pem".`, 
+     `2) Place your SSL certificate private key file in .pem format into the project's root directory as "privkey.pem".\n`, 
+     `These files will be passed as parameters during deployment to set up a destination HTTP endpoint for AWS Firehose.\n`,
+     `3) Once the files are provided, you will be ready for deployment.`
+    ].join('\n');
+
+    console.log(steps);
   } catch (error) {
     spinner.fail('Bootstrapping failed.')
     console.log(error);
