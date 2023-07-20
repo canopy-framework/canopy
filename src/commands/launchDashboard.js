@@ -5,7 +5,7 @@ const path = require('path');
 const pathToDashboard = path.join(__dirname, '../../canopy-admin-dashboard/api')
 
 const launchDashboard = () => {
-  exec(`cd ${pathToDashboard} && npm start`);
+  exec(`cd ${pathToDashboard} && npm install && npm start`);
   console.log("In your browser, go to http://localhost:3001 to visit Canopy's Admin Dashboard ");
 }
 
