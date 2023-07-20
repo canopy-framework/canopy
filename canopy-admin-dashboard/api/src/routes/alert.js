@@ -28,31 +28,18 @@ const alertChoices = () => {
 // reads the alert descriptions from a JSON file
 const readAlertDescriptions = () => {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/alert-choices.json')));
-  
-  // return [
-  //   {
-  //     name: 'Alert for latency',
-  //     value: 'Alert1'
-  //   },
-  //   {
-  //     name: 'Alert for cache-hit ratio',
-  //     value: 'Alert2'
-  //   },
-  //   {
-  //     name: 'Alert for bandwidth',
-  //     value: 'Alert3'
-  //   },
-  //   {
-  //     name: 'Alert for overall error rate',
-  //     value: 'Alert4'
-  //   }
-  // ];
 };
 
 const checkIfAlertsAlreadyActive = async (choices) => {
   const queryPath = `/api/v1/provisioning/alert-rules`;
   const query = `http://${GRAFANA_USERNAME}:${GRAFANA_PASSWORD}@${GRAFANA_HOST}:${GRAFANA_PORT}${queryPath}`;
-  const result = await axios.get(query);
+  let result;
+  try {
+    result = await axios.get(query);
+  } catch (error) {
+    console.log('There was an error fetching the active alert rules from grafana');
+    return choices;
+  }
   const existingAlertsData = result.data;
   if (Array.isArray(existingAlertsData)) {
     const existingTitles = existingAlertsData.map((datum) => {

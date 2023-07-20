@@ -19,8 +19,8 @@ app.use('/configure', routes.configure);
 app.use('/deploy', routes.deploy);
 app.use('/destroy', routes.destroy);
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', '..', 'index.html'));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
