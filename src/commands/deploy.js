@@ -10,12 +10,13 @@ const AWSConfig = require('../../aws-config.json');
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
   const deploySpinner = ora({ 
-    text: 'Deploying AWS Firehose & AWS EC2 instance (Canopy backend)' 
+    text: `Deploying Canopy's components to AWS Infrastructure`
   }).start();
   
-  // Deploying AWS Firehose & Canopy back-end as an EC2 Instance
+  // Deploy Canopy to AWS Infrastructure
   try {
-    const process = await exec('cdk deploy --all --require-approval never');
+    await exec('cdk deploy canopy-frontend-stack --require-approval never');
+    await exec('cdk deploy canopy-backend-stack --require-approval never');
     deploySpinner.succeed('Deployment successful.');
   } catch (error) {
     deploySpinner.fail('Deployment failed.');
@@ -26,33 +27,19 @@ const deploy = async () => {
     text: 'Attaching real-time log configuration to CloudFront distribution', 
   }).start();
 
-  // Attaching real-time log configuration to given CloudFront distribution
+  // Attach real-time log configuration to CloudFront distribution
   try {
     await exec('node ./lib/real-time-config.js');
     configSpinner.succeed('Real-time logging enabled for CloudFront distribution');
-
-    // Output EC2 instance IP address
-    const ec2Client = new EC2Client(AWSConfig.region);
-    const input = {
-      InstanceIds: [ 'i-036f240a6818783ca' ],
-    };
-    const command = new DescribeInstancesCommand(input);
-    const instances = await ec2Client.send(command);
-    const ec2IpAddress = instances.Reservations[0].Instances[0].PublicIpAddress;
-
-    const steps = 
-      [`Your EC2 instance IP address is ${ec2IpAddress}.\n`,
-       `Next steps:`,
-       `1) Modify the DNS record for the provided HTTP endpoint to ${ec2IpAddress}.`,
-       `2) Wait for the DNS changes to propogate. It can take up to 48 hours to propogate worldwide.`,
-       `3) Start using Canopy's UI to visualize logs & metrics at http://${ec2IpAddress}:3000.`,
-      ].join('\n');
-
-    console.log(steps);
   } catch (error) {
     configSpinner.fail('Real-time log configuration setup failed.');
     console.log(error)
   }
+
+  // Output EC2 instance IP address
+  const ec2IpAddress = AWSConfig.ec2IpAddress;
+  const output = `Start using Grafana to visualize logs & metrics at http://${ec2IpAddress}:3000.`;
+  console.log(output);
 }
 
 module.exports = { deploy };
