@@ -32,7 +32,14 @@ const deploy = async () => {
   }
 
   // Output EC2 instance IP address
-  const ec2IpAddress = AWSConfig.ec2IpAddress;
+  const ec2Client = new EC2Client(AWSConfig.region);
+  const input = {
+    InstanceIds: [ 'i-00d7bf41d9728979f' ],
+  };
+  const command = new DescribeInstancesCommand(input);
+  const instances = await ec2Client.send(command);
+  const ec2IpAddress = instances.Reservations[0].Instances[0].PublicIpAddress;
+  
   const output = `Start using Grafana to visualize logs & metrics at http://${ec2IpAddress}:3000.`;
   console.log(output);
 }
