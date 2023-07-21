@@ -4,14 +4,11 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const { EC2Client, DescribeInstancesCommand } = require('@aws-sdk/client-ec2');
 const AWSConfig = require('../../aws-config.json');
 
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
-  const deploySpinner = ora({ 
-    text: `Deploying Canopy's components to AWS Infrastructure`
-  }).start();
+  const deploySpinner = ora(`Deploying Canopy's components to AWS Infrastructure`).start();
   
   // Deploy Canopy to AWS Infrastructure
   try {
@@ -23,9 +20,7 @@ const deploy = async () => {
     console.log(error);
   }
 
-  const configSpinner = ora({ 
-    text: 'Attaching real-time log configuration to CloudFront distribution', 
-  }).start();
+  const configSpinner = ora('Attaching real-time log configuration to CloudFront distribution').start();
 
   // Attach real-time log configuration to CloudFront distribution
   try {

@@ -5,10 +5,10 @@ const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
 
-async function validHttpEndpoint(endpoint) {
-  const regex = new RegExp('^https://.*');
-  return regex.test(endpoint);
-}
+// async function validHttpEndpoint(endpoint) {
+//   const regex = new RegExp('^https://.*');
+//   return regex.test(endpoint);
+// }
 
 const configure = async (options) => {
   // need to add validation
@@ -27,11 +27,6 @@ const configure = async (options) => {
       {
         name: "distributionId",
         message: "Please enter your CloudFront distribution ID:",
-      },
-      {
-        name: "httpEndpoint",
-        message: "Please enter an HTTP endpoint for Firehose delivery (format: https://xyz.httpendpoint.com):",
-        validate: validHttpEndpoint,
       },
       {
         name: "accessKeyId",
@@ -58,7 +53,6 @@ const configure = async (options) => {
   fs.writeFileSync('./aws-config.json', JSON.stringify({
     accountNumber: answers.accountNumber,
     distributionId: answers.distributionId,
-    httpEndpoint: answers.httpEndpoint,
     region: answers.region,
   }, null, 2));
   
@@ -66,30 +60,25 @@ const configure = async (options) => {
   const configureAccessKeyId = `aws configure set aws_access_key_id ${answers.accessKeyId}`;
   const configureSecretKey = `aws configure set aws_secret_access_key ${answers.secretAccessKey}`;
   const configureRegion = `aws configure set region ${answers.region}`;
-  // const configureNginx = `node create_nginx_config.js ${answers.httpEndpoint.replace(/^https:\/\//, '')}`;
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
   
   // Execute above commands
-  await exec(configureAccessKeyId);
-  await exec(configureSecretKey);
-  await exec(configureRegion);
-  // await exec(configureNginx);
+  const configSpinner = ora('Setting up AWS credentials & configuration').start();
+  try {
+    await exec(configureAccessKeyId);
+    await exec(configureSecretKey);
+    await exec(configureRegion);
+    configSpinner.succeed('AWS credentials & configuration setup successful.');
+  } catch(error) {
+    spinner.fail('AWS credentials & configuration setup failed.')
+    console.log(error);
+  }
 
   // Bootstrap AWS environment with CDK resources
   const spinner = ora('Bootstrapping AWS environment with CDK resources').start();
   try {
     await exec(bootstrap);
-    spinner.succeed('Bootstrapping successful.\n');
-
-    const steps = 
-    [`Next steps:`,
-     `1) Place your SSL certificate file in .pem format into the project root directory as "fullchain.pem".`, 
-     `2) Place your SSL certificate private key file in .pem format into the project's root directory as "privkey.pem".\n`, 
-     `These files will be passed as parameters during deployment to set up a destination HTTP endpoint for AWS Firehose.\n`,
-     `3) Once the files are provided, you will be ready for deployment.`
-    ].join('\n');
-
-    console.log(steps);
+    spinner.succeed('Bootstrapping successful.');
   } catch (error) {
     spinner.fail('Bootstrapping failed.')
     console.log(error);
