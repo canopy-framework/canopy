@@ -66,19 +66,19 @@ const configure = async (options) => {
   const configureAccessKeyId = `aws configure set aws_access_key_id ${answers.accessKeyId}`;
   const configureSecretKey = `aws configure set aws_secret_access_key ${answers.secretAccessKey}`;
   const configureRegion = `aws configure set region ${answers.region}`;
-  const configureNginx = `node create_nginx_config.js ${answers.httpEndpoint.replace(/^https:\/\//, '')}`;
+  // const configureNginx = `node create_nginx_config.js ${answers.httpEndpoint.replace(/^https:\/\//, '')}`;
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
   
   // Execute above commands
   await exec(configureAccessKeyId);
   await exec(configureSecretKey);
   await exec(configureRegion);
-  await exec(configureNginx);
+  // await exec(configureNginx);
 
   // Bootstrap AWS environment with CDK resources
   const spinner = ora('Bootstrapping AWS environment with CDK resources').start();
   try {
-    // await exec(bootstrap);
+    await exec(bootstrap);
     spinner.succeed('Bootstrapping successful.\n');
 
     const steps = 
