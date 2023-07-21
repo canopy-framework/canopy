@@ -23,9 +23,10 @@ const destroy = async () => {
 
   const destroySpinner = ora({ text: `Deleting Canopy's AWS Infrastucture`}).start();
   
-  // Delete Kinesis data stream, Firehose, S3 bucket, log groups, EC2 instance
+  // Delete Canopy's AWS Infrastructure
   try {
-    await exec('cdk destroy --all --force');
+    await exec('cdk destroy canopy-frontend-stack --force');
+    await exec('cdk destroy canopy-backend-stack --force');
     destroySpinner.succeed('Canopy AWS Infrastructure successfully deleted.');
   } catch (error) {
     destroySpinner.fail('Deleting Canopy AWS Infrastructure failed.');
