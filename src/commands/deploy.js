@@ -7,7 +7,7 @@ const exec = promisify(baseExec);
 const AWSConfig = require('../../aws-config.json');
 const AWS = require('aws-sdk');
 
-AWS.config.update(AWSConfig.region);
+// AWS.config.update(AWSConfig.region);
 
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
@@ -15,8 +15,8 @@ const deploy = async () => {
   
   // Deploy Canopy to AWS Infrastructure
   try {
-    await exec('cdk deploy canopy-frontend-stack --require-approval never');
     await exec('cdk deploy canopy-backend-stack --require-approval never');
+    await exec('cdk deploy canopy-frontend-stack --require-approval never');
     deploySpinner.succeed('Deployment successful.');
   } catch (error) {
     deploySpinner.fail('Deployment failed.');
