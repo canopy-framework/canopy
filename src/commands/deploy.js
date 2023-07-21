@@ -66,7 +66,6 @@ const deploy = async () => {
       console.log(`Export ${exportName} not found.`);
     }
   });
- 
 }
 
 module.exports = { deploy };
