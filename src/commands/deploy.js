@@ -5,6 +5,9 @@ const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
 const AWSConfig = require('../../aws-config.json');
+const AWS = require('aws-sdk');
+
+AWS.config.update(AWSConfig.region);
 
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
@@ -32,16 +35,37 @@ const deploy = async () => {
   }
 
   // Output EC2 instance IP address
-  const ec2Client = new EC2Client(AWSConfig.region);
-  const input = {
-    InstanceIds: [ 'i-00d7bf41d9728979f' ],
-  };
-  const command = new DescribeInstancesCommand(input);
-  const instances = await ec2Client.send(command);
-  const ec2IpAddress = instances.Reservations[0].Instances[0].PublicIpAddress;
+  // const ec2Client = new EC2Client(AWSConfig.region);
+  // const input = {
+  //   InstanceIds: [ 'i-00d7bf41d9728979f' ],
+  // };
+  // const command = new DescribeInstancesCommand(input);
+  // const instances = await ec2Client.send(command);
+  // const ec2IpAddress = instances.Reservations[0].Instances[0].PublicIpAddress;
   
-  const output = `Start using Grafana to visualize logs & metrics at http://${ec2IpAddress}:3000.`;
-  console.log(output);
+  // const output = `Start using Grafana to visualize logs & metrics at http://${ec2IpAddress}:3000.`;
+  // console.log(output);
+
+  // One way to access Canopy's backend public IP
+  const cloudFormation = new AWS.CloudFormation();
+  const stackName = 'canopy-backend-stack';
+  const exportName = 'CanopyBackendIP';
+
+  cloudFormation.listExports({ StackName: stackName }, (err, data) => {
+    if (err) {
+      console.error('Error:', err);
+      return;
+    }
+    
+    const exportedValue = data.Exports.find((exportObj) => exportObj.Name === exportName);
+
+    if (exportedValue) {
+      const EC2_PUBLIC_IP = exportedValue.Value;
+      console.log('EC2_PUBLIC_IP:', EC2_PUBLIC_IP);
+    } else {
+      console.log(`Export ${exportName} not found.`);
+    }
+  });
 }
 
 module.exports = { deploy };
