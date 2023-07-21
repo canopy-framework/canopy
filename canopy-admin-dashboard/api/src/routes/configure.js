@@ -10,7 +10,7 @@ router.post('/setAWSInfo', async (req, res) => {
 
   try {
     const { stdout } = await execProm(`
-    canopy configure -an ${data.accountNumber} -dID ${data.distributionId} -ep ${data.httpEndpoint} -sk ${data.secretKey} -r ${data.region} -ak ${data.accessKeyId}`);
+    canopy configure -an ${data.accountNumber} -dID ${data.distributionId} -sk ${data.secretKey} -r ${data.region} -ak ${data.accessKeyId}`);
     console.log('stdout: ', stdout);
   } catch (error) {
     console.log('error: ', error);

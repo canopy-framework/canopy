@@ -15,7 +15,7 @@ const configure = async (options) => {
   const numOfOptions = Object.keys(options).length;
   let answers = {};
 
-  if (numOfOptions > 0 && numOfOptions < 6) {
+  if (numOfOptions > 0 && numOfOptions < 5) {
     console.log("You must pass in all options");
     process.exit(0);
   } else if (numOfOptions === 0) {
