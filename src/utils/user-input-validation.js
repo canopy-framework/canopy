@@ -16,7 +16,7 @@ const isValidAWSAccessKeyID = (accessKeyID) => {
   return awsAccessKeyIDRegex.test(accessKeyID) || "Invalid AWS Access Key Id";
 };
 
-const isValidAWSSecretAccessKey = (secretAccessKey, choices) => {
+const isValidAWSSecretAccessKey = (secretAccessKey) => {
   const awsSecretAccessKeyRegex = /^[A-Za-z0-9/+=]{40}$/;
   
   return awsSecretAccessKeyRegex.test(secretAccessKey) || "Invalid AWS Secret Access Key";
