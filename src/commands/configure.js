@@ -4,11 +4,7 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-
-// async function validHttpEndpoint(endpoint) {
-//   const regex = new RegExp('^https://.*');
-//   return regex.test(endpoint);
-// }
+const validations = require("../utils/user-input-validation");
 
 const configure = async (options) => {
   // need to add validation
@@ -23,22 +19,30 @@ const configure = async (options) => {
       {
         name: "accountNumber",
         message: "Please enter your AWS account number:",
+        validate: validations.isValidAWSAccountNumber,
       },
       {
         name: "distributionId",
         message: "Please enter your CloudFront distribution ID:",
+        validate: validations.isValidCloudFrontDistributionID,
       },
       {
         name: "accessKeyId",
         message: "Please enter your AWS access key ID:",
+        validate: validations.isValidAWSAccessKeyID
       },
       {
+        type: "password",
+        mask: true,
         name: "secretAccessKey",
         message: "Please enter your AWS secret access key:",
+        validate: validations.isValidAWSSecretAccessKey
       },
       {
+        type: "list",
         name: "region",
-        message: "Please enter your AWS region:"
+        message: "Please choose one of the following AWS regions:",
+        choices: ['us-east-1', 'eu-west-1', "eu-south-1", "eu-south-2", /* please add other regions you tested from your end */],
       },
     ]);
   }
