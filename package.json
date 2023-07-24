@@ -1,6 +1,6 @@
 {
   "name": "canopy-cli",
-  "version": "0.1.0",
+  "version": "0.1.8",
   "bin": {
     "cdk": "bin/canopy-cli.js",
     "canopy": "./src/index.js"
