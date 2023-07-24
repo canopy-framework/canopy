@@ -14,6 +14,7 @@ program.name('Canopy');
 
 program
   .command('add')
+  .option('-di, -distributionId <distributionId>', 'Add another CloudFront distribution ID')
   .description('Attach Real-Time Log Configuration to Distribution')
   .action(add);
 

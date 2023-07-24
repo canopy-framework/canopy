@@ -7,14 +7,21 @@ const exec = promisify(baseExec);
 const validations = require("../utils/user-input-validation");
 const { CloudFrontClient, GetRealtimeLogConfigCommand, GetDistributionConfigCommand, UpdateDistributionCommand } = require('@aws-sdk/client-cloudfront');
 
-const add = async () => {
-  const question = {
-    name: 'distributionId',
-    message: 'Please enter the ID of the CloudFront distribution to attach your real-time log configuration to:',
-    validate: validations.isValidCloudFrontDistributionID,
-  };
+const add = async (options) => {
+  let answer = options;
 
-  const answer = await inquirer.prompt(question);
+  // Prompt user if add was called without options
+  if (!answer.DistributionId) {
+    const question = {
+      name: 'distributionId',
+      message: 'Please enter the ID of the CloudFront distribution to attach your real-time log configuration to:',
+      validate: validations.isValidCloudFrontDistributionID,
+    };
+  
+    answer = await inquirer.prompt(question);
+  } else {
+    answer.distributionId = answer.DistributionId;
+  }
 
   // Get real-time log configuration ARN
   const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
