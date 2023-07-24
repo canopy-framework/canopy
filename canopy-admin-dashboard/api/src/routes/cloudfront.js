@@ -46,10 +46,10 @@ const getCloudFrontInfo = async () => {
   // return [{distributionId: 'sdfsd', region: 'us-east-1', deployed: 'false'}, {distributionId: 'sdfsd', region: 'us-east-1', deployed: 'falsey babe'}, {distributionId: 'sdfsd', region: 'us-east-1', deployed: 'falsey babadfe'}, {distributionId: 'sdfsd', region: 'us-east-1', deployed: 'falsey boasdf'}];
 };
 
-router.get('/info', (req, res) => {
+router.get('/info', async (req, res) => {
   let info;
   try {
-    info = getCloudFrontInfo();
+    info = await getCloudFrontInfo();
   } catch (err) {
     return res.status(500).send(err);
   }
