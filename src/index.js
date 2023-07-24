@@ -2,6 +2,7 @@
 
 const program = require('commander');
 
+const { add } = require('./commands/add');
 const { deploy } = require('./commands/deploy');
 const { destroy } = require('./commands/destroy');
 const { configure } = require('./commands/configure');
@@ -12,13 +13,18 @@ program.description('Canopy Infrastructure Management API');
 program.name('Canopy');
 
 program
+  .command('add')
+  .description('Attach Real-Time Log Configuration to Distribution')
+  .action(add);
+
+program
   .command('deploy')
-  .description("Deploy Canopy Infrastructure to AWS")
+  .description('Deploy Canopy Infrastructure to AWS')
   .action(deploy);
 
 program
   .command('destroy')
-  .description("Destroy Canopy Infrastructure on AWS")
+  .description('Destroy Canopy Infrastructure on AWS')
   .action(destroy);
 
 program
@@ -28,7 +34,7 @@ program
   .option('-ak, -accessKeyId <accessKeyId>', 'Configure your AWS access key id')
   .option('-sk, -secretAccessKey <secretAccessKey>', 'Configure your AWS secret access key')
   .option('-r, -region <region>', 'Configure your AWS region')
-  .description("Configure your AWS credentials")
+  .description('Configure your AWS credentials')
   .action(configure);
 
 program
