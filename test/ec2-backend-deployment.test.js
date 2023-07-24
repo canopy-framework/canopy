@@ -7,6 +7,18 @@ const AWSConfig = require("../src/aws-config");
 const app = new cdk.App();
 const stack = new EC2_Backend_Deployment(app, 'TestStack');
 
+// clean up function
+afterAll(async () => {
+  try {
+    // Delete the CloudFormation stack created by the CDK stack on line 8
+    const cloudFormation = new AWS.CloudFormation({ region: AWSConfig.region});
+    await cloudFormation.deleteStack({ StackName: stack.stackName }).promise();
+
+  } catch (error) {
+    console.error('Error during stack cleanup:', error);
+  }
+});
+
 describe("Test Canopy's backend stack resource deployment", () => {
   test('EC2_Backend_Deployment creates the required resources', () => {  
     expect(stack).to(haveResource('AWS::EC2::Instance'));
@@ -24,17 +36,5 @@ describe("Test Canopy's backend stack resource deployment", () => {
         Version: '2012-10-17',
       },
     }));
-  });
-  
-  // clean up function
-  afterAll(async () => {
-    try {
-      // Delete the CloudFormation stack created by the CDK stack on line 9
-      const cloudFormation = new AWS.CloudFormation({ region: AWSConfig.region});
-      await cloudFormation.deleteStack({ StackName: stack.stackName }).promise();
-
-    } catch (error) {
-      console.error('Error during stack cleanup:', error);
-    }
   });
 })
