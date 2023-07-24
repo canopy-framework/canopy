@@ -4,24 +4,25 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 
-const { port: GRAFANA_PORT, user: USERNAME,  password: PASSWORD, host: GRAFANA_HOST} = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/grafana-config.json')));
-
-const GRAFANA_URL = `http://${USERNAME}:${PASSWORD}@${GRAFANA_HOST}:${GRAFANA_PORT}/api/admin`;
-
-if (!GRAFANA_PORT || !USERNAME || !PASSWORD) {
-  console.error('Env Error: Incomplete Grafana Env Configuration');
-}
-
 const router = Router();
 
 router.get('/config', async (_, res) => {
+  const { port, host } = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/grafana-config.json')));
   return res.send({
-    host: GRAFANA_HOST,
-    port: GRAFANA_PORT
+    host,
+    port,
   });
 });
 
 router.get('/stats', async (req, res) => {
+  const { port: GRAFANA_PORT, user: USERNAME,  password: PASSWORD, host: GRAFANA_HOST} = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../../../src/constants/grafana-config.json')));
+
+  const GRAFANA_URL = `http://${USERNAME}:${PASSWORD}@${GRAFANA_HOST}:${GRAFANA_PORT}/api/admin`;
+
+  if (!GRAFANA_PORT || !USERNAME || !PASSWORD) {
+    console.error('Env Error: Incomplete Grafana Env Configuration');
+  }
+
   const STATS_URL = GRAFANA_URL + '/stats';
   const USAGE_REPORT_URL = GRAFANA_URL + '/usage-report-preview';
 
