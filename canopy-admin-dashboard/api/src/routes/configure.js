@@ -22,4 +22,22 @@ router.post('/setAWSInfo', async (req, res) => {
   res.status(204).json({ message: 'success' });
 });
 
+router.post('/addDistro', async (req, res) => {
+  const data = req.body.data;
+  console.log(data); //{ distributionId: '23423asf' }
+
+  try {
+    const { stdout } = await execProm(`
+    canopy add -di ${data.distributionId}`);
+    console.log('stdout: ', stdout);
+  } catch (error) {
+    console.log('error: ', error);
+    return res
+      .status(404)
+      .json({ error: 'There was an error setting the configuration details.' });
+  }
+
+  res.status(204).json({ message: 'success' });
+});
+
 export default router;
