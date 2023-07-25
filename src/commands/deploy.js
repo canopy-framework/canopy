@@ -7,6 +7,7 @@ const exec = promisify(baseExec);
 const path = require('path');
 const AWSConfig = require('../../aws-config.json');
 const AWS = require('aws-sdk');
+const fs = require('fs');
 
 // AWS.config.update(AWSConfig.region);
 
@@ -62,6 +63,12 @@ const deploy = async () => {
     if (exportedValue) {
       const EC2_PUBLIC_IP = exportedValue.Value;
       console.log('EC2_PUBLIC_IP:', EC2_PUBLIC_IP);
+      // Write to Grafana Configuration File
+      const grafanaConfigPath = path.join(__dirname, '..', 'constants', "grafana-config.json");
+      const jsonData = fs.readFileSync(grafanaConfigPath);
+      const configData = JSON.parse(jsonData);
+      configData["host"] = EC2_PUBLIC_IP;
+      fs.writeFileSync(grafanaConfigPath, JSON.stringify(configData));
     } else {
       console.log(`Export ${exportName} not found.`);
     }
