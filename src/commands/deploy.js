@@ -47,11 +47,10 @@ const deploy = async () => {
   // console.log(output);
 
   // One way to access Canopy's backend public IP
-  const cloudFormation = new AWS.CloudFormation();
-  const stackName = 'canopy-backend-stack';
+  const cloudFormation = new AWS.CloudFormation({ region: AWSConfig.region });
   const exportName = 'CanopyBackendIP';
 
-  cloudFormation.listExports({ StackName: stackName }, (err, data) => {
+  cloudFormation.listExports((err, data) => {
     if (err) {
       console.error('Error:', err);
       return;
