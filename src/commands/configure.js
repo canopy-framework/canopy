@@ -42,7 +42,7 @@ const configure = async (options) => {
         type: "list",
         name: "region",
         message: "Please choose one of the following AWS regions:",
-        choices: ['us-east-1', 'eu-west-1', "eu-south-1", "eu-south-2", /* please add other regions you tested from your end */],
+        choices: ['us-east-1', 'us-west-2', 'eu-west-1', "eu-south-1", "eu-south-2", /* please add other regions you tested from your end */],
       },
     ]);
   }
