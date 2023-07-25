@@ -18,42 +18,22 @@ const getCloudFrontInfo = async () => {
   // distributionData.unshift(awsConfigData.distributionId);
 
   let distributionData = [awsConfigData.distributionId];
-  try {
-    const res = await pool.query("SELECT * FROM cdn_distributions");
-    console.log("ROWS", res.rows);
-    distributionData.push(...res.rows.map((row) => row.distribution_id));
-    console.log("distribution data", distributionData);
-  } catch (error) {
-    console.error(error);
-  }
-  // res looked like this [
-    //   {
-    //     id: 1,
-    //     distribution_id: '123456789123567',
-    //     realtime_config_id: { hi: 'hi' }
-    //   },
-    //   {
-    //     id: 2,
-    //     distribution_id: '123456789123567',
-    //     realtime_config_id: { hi: 'hi' }
-    //   }
-    // ]
+
+  const res = await pool.query("SELECT * FROM cdn_distributions");
+  console.log("ROWS", res.rows);
+  distributionData.push(...res.rows.map((row) => row.distribution_id));
+  console.log("distribution data", distributionData);
   
   let info = [];
 
-  try {
-    distributionData.forEach((id, index) => {
-      info[index] = {};
-      info[index]['distributionId'] = id;
-      info[index]['region'] = awsConfigData.region;
-      info[index]['deployed'] = String(!!awsConfigData['deployed']);
-      
-    });
-  } catch (err) {
-    return { error: 'Error fetching CloudFront info ' + err };
-  }
-  return info; //so now just make sure that info matches the format below
-  // return [{distributionId: 'sdfsd', region: 'us-east-1', deployed: 'false'}, {distributionId: 'sdfsd', region: 'us-east-1', deployed: 'falsey babe'}, {distributionId: 'sdfsd', region: 'us-east-1', deployed: 'falsey babadfe'}, {distributionId: 'sdfsd', region: 'us-east-1', deployed: 'falsey boasdf'}];
+  distributionData.forEach((id, index) => {
+    info[index] = {};
+    info[index]['distributionId'] = id;
+    info[index]['region'] = awsConfigData.region;
+    info[index]['deployed'] = String(!!awsConfigData['deployed']);
+    
+  });
+  return info; 
 };
 
 router.get('/info', async (req, res) => {
@@ -61,6 +41,7 @@ router.get('/info', async (req, res) => {
   try {
     info = await getCloudFrontInfo();
   } catch (err) {
+    console.log(err);
     return res.status(500).send(err);
   }
   return res.status(200).json(info);
