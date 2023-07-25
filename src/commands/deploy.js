@@ -4,6 +4,7 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
+const path = require('path');
 const AWSConfig = require('../../aws-config.json');
 const AWS = require('aws-sdk');
 
@@ -15,8 +16,8 @@ const deploy = async () => {
   
   // Deploy Canopy to AWS Infrastructure
   try {
-    await exec('cdk deploy canopy-backend-stack --require-approval never');
-    await exec('cdk deploy canopy-frontend-stack --require-approval never');
+    // await exec('cdk deploy canopy-backend-stack --require-approval never');
+    // await exec('cdk deploy canopy-frontend-stack --require-approval never');
     deploySpinner.succeed('Deployment successful.');
   } catch (error) {
     deploySpinner.fail('Deployment failed.');
@@ -27,7 +28,7 @@ const deploy = async () => {
 
   // Attach real-time log configuration to CloudFront distribution
   try {
-    await exec('node ./lib/real-time-config.js');
+    await exec(`node ${path.join(__dirname, '/../../lib/real-time-config.js')}`);
     configSpinner.succeed('Real-time logging enabled for CloudFront distribution');
   } catch (error) {
     configSpinner.fail('Real-time log configuration setup failed.');
