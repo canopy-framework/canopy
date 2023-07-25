@@ -1,33 +1,43 @@
 import fs from 'fs';
 import path from 'path';
 import { Router } from 'express';
-// import { Pool } from "pg";
+import { Pool } from "pg";
 
-// const pool = new Pool({
-//   user: "alexanderriviere",
-//   database: "grafdb",
-//   password: "password",
-//   port: 5432,
-//   host: "localhost",
-// });
+const pool = new Pool({
+  user: "postgres",
+  database: "dashboard_storage",
+  port: 5432,
+  host: "localhost",
+});
 
 const router = Router();
 
 const getCloudFrontInfo = async () => {
   const awsConfigData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'aws-config.json')));
-  let distributionData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'cloudfront-distributions.json'))).map((distObject) => distObject.distributionId);
-  distributionData.unshift(awsConfigData.distributionId);
+  // let distributionData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'cloudfront-distributions.json'))).map((distObject) => distObject.distributionId);
+  // distributionData.unshift(awsConfigData.distributionId);
 
-  // try {
-  //   const res = await pool.query("SELECT * FROM logs");
-  //   console.log("ROWS", res.rows);
-  // } catch (error) {
-  //   console.error(error);
-  // }
+  let distributionData = [awsConfigData.distributionId];
+  try {
+    const res = await pool.query("SELECT * FROM cdn_distributions");
+    console.log("ROWS", res.rows);
+    distributionData.push(...res.rows.map((row) => row.distribution_id));
+    console.log("distribution data", distributionData);
+  } catch (error) {
+    console.error(error);
+  }
   // res looked like this [
-  //   { id: 1, time: 2016-06-22T23:10:25.000Z, timetofirstbytems: 32 },
-  //   { id: 2, time: 2023-06-22T23:10:25.000Z, timetofirstbytems: 32 },
-  // ]
+    //   {
+    //     id: 1,
+    //     distribution_id: '123456789123567',
+    //     realtime_config_id: { hi: 'hi' }
+    //   },
+    //   {
+    //     id: 2,
+    //     distribution_id: '123456789123567',
+    //     realtime_config_id: { hi: 'hi' }
+    //   }
+    // ]
   
   let info = [];
 
