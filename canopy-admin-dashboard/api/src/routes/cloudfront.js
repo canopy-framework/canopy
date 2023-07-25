@@ -20,9 +20,7 @@ const getCloudFrontInfo = async () => {
   let distributionData = [awsConfigData.distributionId];
 
   const res = await pool.query("SELECT * FROM cdn_distributions");
-  console.log("ROWS", res.rows);
   distributionData.push(...res.rows.map((row) => row.distribution_id));
-  console.log("distribution data", distributionData);
   
   let info = [];
 
