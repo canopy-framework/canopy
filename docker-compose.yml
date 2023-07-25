@@ -1,16 +1,6 @@
 version: '3.9'
 
 services:
-  vector:
-    image: amazingjason/canopy-vector-firehose:latest
-    container_name: vector
-    volumes:
-      - vector_data:/var/lib/vector
-    ports:
-      - 8383:8383
-    depends_on:
-      clickhouse:
-        condition: service_healthy
   clickhouse:
     image: facelessgladiator/canopy-clickhouse:latest
     container_name: clickhouse
