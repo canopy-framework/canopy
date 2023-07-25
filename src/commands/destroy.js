@@ -7,6 +7,14 @@ const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionComman
 const iam = require('@aws-sdk/client-iam');
 const AWSConfig = require('../../aws-config.json');
 const axios = require('axios');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  user: 'postgres',
+  database: 'dashboard_storage',
+  port: 5432,
+  host: 'localhost',
+});
 
 async function confirmDeletion() {
   const question = {
@@ -83,6 +91,10 @@ const destroy = async () => {
     }
     const deleteRoleCommand = new iam.DeleteRoleCommand(roleInput);
     await iamClient.send(deleteRoleCommand);
+
+    // Delete all distribution entries from PostgreSQL DB
+    const result = await pool.query('DELETE FROM cdn_distributions');
+    console.log("ROWS", result.rows);
 
     configSpinner.succeed('Real-time log configuration successfully deleted.');
   } catch(error) {
