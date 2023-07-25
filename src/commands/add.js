@@ -6,6 +6,14 @@ const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
 const validations = require("../utils/user-input-validation");
 const { CloudFrontClient, GetRealtimeLogConfigCommand, GetDistributionConfigCommand, UpdateDistributionCommand } = require('@aws-sdk/client-cloudfront');
+import { Pool } from "pg";
+
+const pool = new Pool({
+  user: 'postgres',
+  database: 'dashboard_storage',
+  port: 5432,
+  host: 'localhost',
+});
 
 const add = async (options) => {
   let answer = options;
@@ -40,6 +48,17 @@ const add = async (options) => {
     realtimeConfig: realtimeConfig.RealtimeLogConfig,
   });
   fs.writeFileSync('./cloudfront-distributions.json', JSON.stringify(distributions, null, 2));
+
+
+  // try {
+  //   const result = await pool.query(
+  //     'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
+  //     [answer.distributionId, realtimeConfig.RealtimeLogConfig]
+  //   );
+  //   console.log("ROWS", result.rows);
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   // Get current distribution
   const distribution = new GetDistributionConfigCommand({ Id: answer.distributionId });
