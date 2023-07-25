@@ -3,8 +3,8 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand, ListDistributionsByWebACLIdResultFilterSensitiveLog } = require("@aws-sdk/client-cloudfront");
-const iam = require("@aws-sdk/client-iam");
+const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand } = require("@aws-sdk/client-cloudfront");
+const iam = require('@aws-sdk/client-iam');
 const AWSConfig = require('../../aws-config.json');
 const axios = require('axios');
 
@@ -38,12 +38,14 @@ const destroy = async () => {
 
   try {
     const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
+    let realtimeConfigARN;
 
     // Fetch distributions info from Express backend of admin dashboard
-    const distributions = await axios.get('http://localhost:3001/cloudfront/info');
+    const response = await axios.get('http://localhost:3001/cloudfront/info');
+    const distributions = response.data;
     for (let index = 0; index < distributions.length; index++) {
       // Get current distribution
-      const distributionId = distributions.distributionId;
+      const distributionId = distributions[index].distributionId;
       const distribution = new GetDistributionConfigCommand({ Id: distributionId });
       const distConfig = await cloudFrontClient.send(distribution);
 
@@ -51,6 +53,11 @@ const destroy = async () => {
       distConfig.Id = distributionId;
       distConfig.IfMatch = distConfig.ETag;
       delete distConfig.ETag;
+
+      if (!realtimeConfigARN) {
+        realtimeConfigARN = distConfig.DistributionConfig.DefaultCacheBehavior.RealtimeLogConfigArn;
+      }
+      
       delete distConfig.DistributionConfig.DefaultCacheBehavior.RealtimeLogConfigArn;
       const updateConfigCommand = new UpdateDistributionCommand(distConfig);
       await cloudFrontClient.send(updateConfigCommand);
