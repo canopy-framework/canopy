@@ -29,6 +29,7 @@
     "constructs": "^10.0.0",
     "gradient-string": "^2.0.2",
     "inquirer": "^8.2.5",
-    "ora-classic": "^5.4.2"
+    "ora-classic": "^5.4.2",
+    "pg": "^8.11.1"
   }
 }
