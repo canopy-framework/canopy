@@ -3,9 +3,10 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand } = require("@aws-sdk/client-cloudfront");
+const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand, ListDistributionsByWebACLIdResultFilterSensitiveLog } = require("@aws-sdk/client-cloudfront");
 const iam = require("@aws-sdk/client-iam");
 const AWSConfig = require('../../aws-config.json');
+const axios = require('axios');
 
 async function confirmDeletion() {
   const question = {
@@ -36,19 +37,24 @@ const destroy = async () => {
   const configSpinner = ora({ text: `Deleting Real-Time Log Configuration`}).start();
 
   try {
-    // Get current distribution
     const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
-    const distribution = new GetDistributionConfigCommand({ Id: AWSConfig.distributionId });
-    const distConfig = await cloudFrontClient.send(distribution);
-    
-    // Update distribution to remove real-time log configuration from cache behavior
-    distConfig.Id = AWSConfig.distributionId;
-    distConfig.IfMatch = distConfig.ETag;
-    delete distConfig.ETag;
-    const realtimeConfigARN = distConfig.DistributionConfig.DefaultCacheBehavior.RealtimeLogConfigArn;
-    delete distConfig.DistributionConfig.DefaultCacheBehavior.RealtimeLogConfigArn;
-    const updateConfigCommand = new UpdateDistributionCommand(distConfig);
-    await cloudFrontClient.send(updateConfigCommand);
+
+    // Fetch distributions info from Express backend of admin dashboard
+    const distributions = await axios.get('http://localhost:3001/cloudfront/info');
+    for (let index = 0; index < distributions.length; index++) {
+      // Get current distribution
+      const distributionId = distributions.distributionId;
+      const distribution = new GetDistributionConfigCommand({ Id: distributionId });
+      const distConfig = await cloudFrontClient.send(distribution);
+
+      // Deatch real-time log configuration from distribution
+      distConfig.Id = distributionId;
+      distConfig.IfMatch = distConfig.ETag;
+      delete distConfig.ETag;
+      delete distConfig.DistributionConfig.DefaultCacheBehavior.RealtimeLogConfigArn;
+      const updateConfigCommand = new UpdateDistributionCommand(distConfig);
+      await cloudFrontClient.send(updateConfigCommand);
+    }
 
     // Delete real-time log configuration
     const configInput = { ARN: realtimeConfigARN };
