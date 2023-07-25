@@ -17,7 +17,7 @@ const getCloudFrontInfo = async () => {
   // let distributionData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'cloudfront-distributions.json'))).map((distObject) => distObject.distributionId);
   // distributionData.unshift(awsConfigData.distributionId);
 
-  let distributionData = [awsConfigData.distributionId];
+  let distributionData = [];
 
   const res = await pool.query("SELECT * FROM cdn_distributions");
   distributionData.push(...res.rows.map((row) => row.distribution_id));
@@ -28,7 +28,6 @@ const getCloudFrontInfo = async () => {
     info[index] = {};
     info[index]['distributionId'] = id;
     info[index]['region'] = awsConfigData.region;
-    info[index]['deployed'] = String(!!awsConfigData['deployed']);
     
   });
   return info; 
