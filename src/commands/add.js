@@ -34,27 +34,7 @@ const add = async (options) => {
     Name: 'real-time-log-configuration',
   });
   const realtimeConfig = await cloudFrontClient.send(getConfigCommand);
-  // console.log(realtimeConfig);
   const realtimeConfigARN = realtimeConfig.RealtimeLogConfig.ARN;
-
-  // Write distribution ID & real-time configuration to JSON file
-  // const jsonString = fs.readFileSync('./cloudfront-distributions.json');
-  // const distributions = JSON.parse(jsonString);
-  // distributions.push({ 
-  //   distributionId: answer.distributionId,
-  //   realtimeConfig: realtimeConfig.RealtimeLogConfig,
-  // });
-  // fs.writeFileSync('./cloudfront-distributions.json', JSON.stringify(distributions, null, 2));
-
-  try {
-    const result = await pool.query(
-      'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
-      [answer.distributionId, realtimeConfig.RealtimeLogConfig]
-    );
-    console.log("ROWS", result.rows);
-  } catch (error) {
-    console.log(error);
-  }
 
   const configSpinner = ora('Attaching real-time log configuration to CloudFront distribution').start();
   
@@ -74,6 +54,16 @@ const add = async (options) => {
   } catch (error) {
     configSpinner.fail('Real-time log configuration setup failed.');
     console.log(error)
+  }
+
+  // Add distribution to PostgreSQL DB
+  try {
+    await pool.query(
+      'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
+      [answer.distributionId, realtimeConfig.RealtimeLogConfig]
+    );
+  } catch (error) {
+    console.log(error);
   }
 };
 
