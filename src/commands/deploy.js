@@ -6,10 +6,17 @@ const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
 const path = require('path');
 const AWSConfig = require('../../aws-config.json');
+const { CloudFrontClient, GetRealtimeLogConfigCommand } = require('@aws-sdk/client-cloudfront');
 const AWS = require('aws-sdk');
 const fs = require('fs');
+const { Pool } = require('pg');
 
-// AWS.config.update(AWSConfig.region);
+const pool = new Pool({
+  user: 'postgres',
+  database: 'dashboard_storage',
+  port: 5432,
+  host: 'localhost',
+});
 
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
@@ -17,8 +24,8 @@ const deploy = async () => {
   
   // Deploy Canopy to AWS Infrastructure
   try {
-    // await exec('cdk deploy canopy-backend-stack --require-approval never');
-    // await exec('cdk deploy canopy-frontend-stack --require-approval never');
+    await exec('cdk deploy canopy-backend-stack --require-approval never');
+    await exec('cdk deploy canopy-frontend-stack --require-approval never');
     deploySpinner.succeed('Deployment successful.');
   } catch (error) {
     deploySpinner.fail('Deployment failed.');
@@ -36,19 +43,25 @@ const deploy = async () => {
     console.log(error)
   }
 
-  // Output EC2 instance IP address
-  // const ec2Client = new EC2Client(AWSConfig.region);
-  // const input = {
-  //   InstanceIds: [ 'i-00d7bf41d9728979f' ],
-  // };
-  // const command = new DescribeInstancesCommand(input);
-  // const instances = await ec2Client.send(command);
-  // const ec2IpAddress = instances.Reservations[0].Instances[0].PublicIpAddress;
-  
-  // const output = `Start using Grafana to visualize logs & metrics at http://${ec2IpAddress}:3000.`;
-  // console.log(output);
+  // Add distribution to PostgreSQL DB
+  try {
+    // Get real-time log configuration
+    const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
+    const getConfigCommand = new GetRealtimeLogConfigCommand({
+      Name: 'real-time-log-configuration',
+    });
+    const realtimeConfig = await cloudFrontClient.send(getConfigCommand);
+    
+    // Insert into DB
+    const result = await pool.query(
+      'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
+      [AWSConfig.distributionId, realtimeConfig.RealtimeLogConfig]
+    );
+  } catch (error) {
+    console.log(error);
+  }
 
-  // One way to access Canopy's backend public IP
+  // Output Canopy's backend public IP
   const cloudFormation = new AWS.CloudFormation({ region: AWSConfig.region });
   const exportName = 'CanopyBackendIP';
 
@@ -62,13 +75,14 @@ const deploy = async () => {
 
     if (exportedValue) {
       const EC2_PUBLIC_IP = exportedValue.Value;
-      console.log('EC2_PUBLIC_IP:', EC2_PUBLIC_IP);
+      console.log(`Visualize logs and metrics via the Grafana UI at ${EC2_PUBLIC_IP}:3000`);
+      
       // Write to Grafana Configuration File
       const grafanaConfigPath = path.join(__dirname, '..', 'constants', "grafana-config.json");
       const jsonData = fs.readFileSync(grafanaConfigPath);
       const configData = JSON.parse(jsonData);
       configData["host"] = EC2_PUBLIC_IP;
-      fs.writeFileSync(grafanaConfigPath, JSON.stringify(configData));
+      fs.writeFileSync(grafanaConfigPath, JSON.stringify(configData, null, 2));
     } else {
       console.log(`Export ${exportName} not found.`);
     }
