@@ -74,7 +74,7 @@ const configure = async (options) => {
     await exec(configureRegion);
     configSpinner.succeed('AWS credentials & configuration setup successful.');
   } catch(error) {
-    spinner.fail('AWS credentials & configuration setup failed.')
+    configSpinner.fail('AWS credentials & configuration setup failed.')
     console.log(error);
   }
 
