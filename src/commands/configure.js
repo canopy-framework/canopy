@@ -7,7 +7,6 @@ const exec = promisify(baseExec);
 const validations = require("../utils/user-input-validation");
 
 const configure = async (options) => {
-  // need to add validation
   const numOfOptions = Object.keys(options).length;
   let answers = {};
 

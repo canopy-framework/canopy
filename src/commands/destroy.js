@@ -45,7 +45,7 @@ const destroy = async () => {
   const configSpinner = ora({ text: `Deleting Real-Time Log Configuration`}).start();
 
   try {
-    const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
+    const cloudFrontClient = new CloudFrontClient({ region: AWSConfig.region });
     let realtimeConfigARN;
 
     // Fetch distributions info from Express backend of admin dashboard
