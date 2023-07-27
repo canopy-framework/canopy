@@ -2,6 +2,7 @@
 const inquirer = require('inquirer');
 const ora = require('ora-classic');
 const validations = require("../utils/user-input-validation");
+const AWSConfig = require('../../aws-config.json');
 const { CloudFrontClient, GetRealtimeLogConfigCommand, GetDistributionConfigCommand, UpdateDistributionCommand } = require('@aws-sdk/client-cloudfront');
 const { Pool } = require('pg');
 
@@ -29,7 +30,7 @@ const add = async (options) => {
   }
 
   // Get real-time log configuration ARN
-  const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
+  const cloudFrontClient = new CloudFrontClient({ region: AWSConfig.region });
   const getConfigCommand = new GetRealtimeLogConfigCommand({
     Name: 'real-time-log-configuration',
   });

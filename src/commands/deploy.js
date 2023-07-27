@@ -46,7 +46,7 @@ const deploy = async () => {
   // Add distribution to PostgreSQL DB
   try {
     // Get real-time log configuration
-    const cloudFrontClient = new CloudFrontClient({ region: 'us-east-1' });
+    const cloudFrontClient = new CloudFrontClient({ region: AWSConfig.region });
     const getConfigCommand = new GetRealtimeLogConfigCommand({
       Name: 'real-time-log-configuration',
     });
