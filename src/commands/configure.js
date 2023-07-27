@@ -53,7 +53,7 @@ const configure = async (options) => {
 
   console.log(answers.accountNumber, answers.distributionId, answers.httpEndpoint, answers.accessKeyId, answers.secretAccessKey, answers.region);
 
-  fs.writeFileSync('../aws-config.json', JSON.stringify({
+  fs.writeFileSync('./aws-config.json', JSON.stringify({
     accountNumber: answers.accountNumber,
     distributionId: answers.distributionId,
     region: answers.region,
