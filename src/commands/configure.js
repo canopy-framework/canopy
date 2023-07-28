@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const inquirer = require('inquirer');
 const ora = require('ora-classic');
 const { promisify } = require('util');
@@ -64,6 +65,9 @@ const configure = async (options) => {
   const configureSecretKey = `aws configure set aws_secret_access_key ${answers.secretAccessKey}`;
   const configureRegion = `aws configure set region ${answers.region}`;
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
+
+  // Command for executing bash script that sets up a postgreSQL database, loads schema for the table and starts the DB server
+  const setupDB = `sudo bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > db_setup_output.log 2>&1`;
   
   // Execute above commands
   const configSpinner = ora('Setting up AWS credentials & configuration').start();
@@ -84,6 +88,16 @@ const configure = async (options) => {
     spinner.succeed('Bootstrapping successful.');
   } catch (error) {
     spinner.fail('Bootstrapping failed.')
+    console.log(error);
+  }
+
+  // Set up dashboard database
+  const databaseSpinner = ora('Setting up dashboard database').start();
+  try {
+    await exec(setupDB);
+    databaseSpinner.succeed('Database setup successful.');
+  } catch(error) {
+    databaseSpinner.fail('Error setting up the database')
     console.log(error);
   }
 }
