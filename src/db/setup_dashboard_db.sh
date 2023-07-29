@@ -3,6 +3,12 @@
 # Get the absolute path of the script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Function to set a password for the "postgres" user
+set_postgres_password() {
+  echo "Setting a password for the 'postgres' user..."
+  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
+}
+
 check_command() {
   if ! command -v "$1" &> /dev/null; then
     echo "Error: $1 is not installed. Installing it now..."
@@ -38,6 +44,9 @@ start_postgres_server
 DB_NAME="dashboard_storage"
 echo "Creating the database $DB_NAME"
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" 
+
+# Set a password for the "postgres" user
+set_postgres_password
 
 # Use the absolute path for dashboard_schema.sql
 SQL_FILE="$SCRIPT_DIR/dashboard_schema.sql"
