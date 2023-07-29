@@ -5,7 +5,7 @@ const isValidAWSAccountNumber = (accountNumber) => {
 };
 
 const isValidCloudFrontDistributionID = (distributionID) => {
-  const cloudFrontIDRegex = /^[A-Z0-9]{14}$/;
+  const cloudFrontIDRegex = /^[A-Z0-9]{13,}$/;
 
   return cloudFrontIDRegex.test(distributionID) || "Invalid CloudFront Distribution ID!";
 };
