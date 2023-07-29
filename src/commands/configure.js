@@ -5,7 +5,7 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const validations = require("../utils/user-input-validation");
+const input = require("../utils/user-input-validation");
 
 const configure = async (options) => {
   const numOfOptions = Object.keys(options).length;
@@ -19,24 +19,24 @@ const configure = async (options) => {
       {
         name: "accountNumber",
         message: "Please enter your AWS account number:",
-        validate: validations.isValidAWSAccountNumber,
+        validate: input.isValidAWSAccountNumber,
       },
       {
         name: "distributionId",
         message: "Please enter your CloudFront distribution ID:",
-        validate: validations.isValidCloudFrontDistributionID,
+        validate: input.isValidCloudFrontDistributionID,
       },
       {
         name: "accessKeyId",
         message: "Please enter your AWS access key ID:",
-        validate: validations.isValidAWSAccessKeyID
+        validate: input.isValidAWSAccessKeyID
       },
       {
         type: "password",
         mask: true,
         name: "secretAccessKey",
         message: "Please enter your AWS secret access key:",
-        validate: validations.isValidAWSSecretAccessKey
+        validate: input.isValidAWSSecretAccessKey
       },
       {
         type: "list",
@@ -73,7 +73,7 @@ const configure = async (options) => {
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
 
   // Command for executing bash script that sets up a postgreSQL database, loads schema and starts the DB server
-  const setupDB = `echo ${answers.systemPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > db_setup_output.log 2>&1`;
+  const setupDB = `echo ${answers.systemPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > setup_db_output.log 2>&1`;
   
   // Execute above commands
   const configSpinner = ora('Setting up AWS credentials & configuration').start();
