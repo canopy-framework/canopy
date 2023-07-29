@@ -44,6 +44,12 @@ const configure = async (options) => {
         message: "Please choose one of the following AWS regions:",
         choices: ['us-east-1', 'us-west-2', 'eu-west-1', "eu-south-1", "eu-south-2", /* please add other regions you tested from your end */],
       },
+      {
+        type: "password",
+        mask: true,
+        name: "systemPassword",
+        message: "Please enter your local system password in order to setup a PostgreSQL Database for Canopy's admin Dashboard",
+      },
     ]);
   }
 
@@ -66,8 +72,8 @@ const configure = async (options) => {
   const configureRegion = `aws configure set region ${answers.region}`;
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
 
-  // Command for executing bash script that sets up a postgreSQL database, loads schema for the table and starts the DB server
-  const setupDB = `sudo bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > db_setup_output.log 2>&1`;
+  // Command for executing bash script that sets up a postgreSQL database, loads schema and starts the DB server
+  const setupDB = `echo ${answers.systemPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > setup_db_output.log 2>&1`;
   
   // Execute above commands
   const configSpinner = ora('Setting up AWS credentials & configuration').start();
