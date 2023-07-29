@@ -73,7 +73,7 @@ const configure = async (options) => {
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
 
   // Command for executing bash script that sets up a postgreSQL database, loads schema and starts the DB server
-  const setupDB = `echo ${answers.systemPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > setup_db_output.log 2>&1`;
+  const setupDB = `echo ${answers.systemPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > db_setup_output.log 2>&1`;
   
   // Execute above commands
   const configSpinner = ora('Setting up AWS credentials & configuration').start();
