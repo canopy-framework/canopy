@@ -13,6 +13,7 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   user: 'postgres',
+  password: 'password',
   database: 'dashboard_storage',
   port: 5432,
   host: 'localhost',
@@ -55,6 +56,7 @@ const deploy = async () => {
     // Insert into DB
     const result = await pool.query(
       'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
+      console.log("type of the value inserted for raltime config:", typeof realtimeConfig.RealtimeLogConfig)
       [AWSConfig.distributionId, realtimeConfig.RealtimeLogConfig]
     );
   } catch (error) {
@@ -75,7 +77,7 @@ const deploy = async () => {
 
     if (exportedValue) {
       const EC2_PUBLIC_IP = exportedValue.Value;
-      console.log(`Visualize logs and metrics via the Grafana UI at ${EC2_PUBLIC_IP}:3000`);
+      console.log(`Visualize logs and metrics via the Grafana UI at http://${EC2_PUBLIC_IP}:3000`);
       
       // Write to Grafana Configuration File
       const grafanaConfigPath = path.join(__dirname, '..', 'constants', "grafana-config.json");
