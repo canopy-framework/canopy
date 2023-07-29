@@ -56,8 +56,7 @@ const deploy = async () => {
     // Insert into DB
     const result = await pool.query(
       'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
-      console.log("type of the value inserted for raltime config:", typeof realtimeConfig.RealtimeLogConfig)
-      [AWSConfig.distributionId, realtimeConfig.RealtimeLogConfig]
+      [AWSConfig.distributionId, JSON.stringify(realtimeConfig.RealtimeLogConfig)]
     );
   } catch (error) {
     console.log(error);
