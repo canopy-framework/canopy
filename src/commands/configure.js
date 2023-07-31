@@ -47,8 +47,8 @@ const configure = async (options) => {
       {
         type: "password",
         mask: true,
-        name: "systemPassword",
-        message: "Please enter your local system password in order to setup a PostgreSQL Database for Canopy's admin Dashboard",
+        name: "adminPassword",
+        message: "Please enter your `sudo` password in order to setup a PostgreSQL Database for Canopy's admin dashboard",
       },
     ]);
   }
@@ -57,8 +57,6 @@ const configure = async (options) => {
     const lowerCaseKey = key[0].toLowerCase() + key.slice(1);
     answers[lowerCaseKey] = options[key]
   })
-
-  console.log(answers.accountNumber, answers.distributionId, answers.httpEndpoint, answers.accessKeyId, answers.secretAccessKey, answers.region);
 
   fs.writeFileSync('./aws-config.json', JSON.stringify({
     accountNumber: answers.accountNumber,
@@ -73,7 +71,7 @@ const configure = async (options) => {
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
 
   // Command for executing bash script that sets up a postgreSQL database, loads schema and starts the DB server
-  const setupDB = `echo ${answers.systemPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > setup_db_output.log 2>&1`;
+  const setupDB = `echo ${answers.adminPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > setup_db_output.log 2>&1`;
   
   // Execute above commands
   const configSpinner = ora('Setting up AWS credentials & configuration').start();
@@ -98,10 +96,10 @@ const configure = async (options) => {
   }
 
   // Set up dashboard database
-  const databaseSpinner = ora('Setting up dashboard database').start();
+  const databaseSpinner = ora("Setting up Canopy's admin dashboard").start();
   try {
     await exec(setupDB);
-    databaseSpinner.succeed('Database setup successful.');
+    databaseSpinner.succeed('Admin dashboard successfully setup.');
   } catch(error) {
     databaseSpinner.fail('Error setting up the database')
     console.log(error);
