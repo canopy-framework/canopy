@@ -9,15 +9,7 @@ const AWSConfig = require('../../aws-config.json');
 const { CloudFrontClient, GetRealtimeLogConfigCommand } = require('@aws-sdk/client-cloudfront');
 const AWS = require('aws-sdk');
 const fs = require('fs');
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'postgres',
-  password: 'password',
-  database: 'dashboard_storage',
-  port: 5432,
-  host: 'localhost',
-});
+const { saveDistribution } = require("../../canopy-admin-dashboard/api/src/database/crud");
 
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
@@ -44,7 +36,7 @@ const deploy = async () => {
     console.log(error)
   }
 
-  // Add distribution to PostgreSQL DB
+  // Add distribution to DB
   try {
     // Get real-time log configuration
     const cloudFrontClient = new CloudFrontClient({ region: AWSConfig.region });
@@ -53,11 +45,7 @@ const deploy = async () => {
     });
     const realtimeConfig = await cloudFrontClient.send(getConfigCommand);
     
-    // Insert into DB
-    const result = await pool.query(
-      'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
-      [AWSConfig.distributionId, JSON.stringify(realtimeConfig.RealtimeLogConfig)]
-    );
+    await saveDistribution(AWSConfig.distributionId, JSON.stringify(realtimeConfig.RealtimeLogConfig))
   } catch (error) {
     console.log(error);
   }

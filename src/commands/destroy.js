@@ -6,16 +6,7 @@ const exec = promisify(baseExec);
 const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand } = require("@aws-sdk/client-cloudfront");
 const iam = require('@aws-sdk/client-iam');
 const AWSConfig = require('../../aws-config.json');
-const axios = require('axios');
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'postgres',
-  password: 'password',
-  database: 'dashboard_storage',
-  port: 5432,
-  host: 'localhost',
-});
+const { deleteAllDistributions, listAllDistributions } = require("../../canopy-admin-dashboard/api/src/database/crud");
 
 async function confirmDeletion() {
   const question = {
@@ -49,9 +40,9 @@ const destroy = async () => {
     const cloudFrontClient = new CloudFrontClient({ region: AWSConfig.region });
     let realtimeConfigARN;
 
-    // Fetch distributions info from Express backend of admin dashboard
-    const response = await axios.get('http://localhost:3001/cloudfront/info');
-    const distributions = response.data;
+    // Fetch distributions info from database
+    const distributions = await listAllDistributions();
+
     for (let index = 0; index < distributions.length; index++) {
       // Get current distribution
       const distributionId = distributions[index].distributionId;
@@ -93,9 +84,8 @@ const destroy = async () => {
     const deleteRoleCommand = new iam.DeleteRoleCommand(roleInput);
     await iamClient.send(deleteRoleCommand);
 
-    // Delete all distribution entries from PostgreSQL DB
-    const result = await pool.query('DELETE FROM cdn_distributions');
-    console.log("ROWS", result.rows);
+    // Delete all distribution entries from DB
+    await deleteAllDistributions();
 
     configSpinner.succeed('Real-time log configuration successfully deleted.');
   } catch(error) {

@@ -4,15 +4,7 @@ const ora = require('ora-classic');
 const validations = require("../utils/user-input-validation");
 const AWSConfig = require('../../aws-config.json');
 const { CloudFrontClient, GetRealtimeLogConfigCommand, GetDistributionConfigCommand, UpdateDistributionCommand } = require('@aws-sdk/client-cloudfront');
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'postgres',
-  password: 'password',
-  database: 'dashboard_storage',
-  port: 5432,
-  host: 'localhost',
-});
+const { saveDistribution } = require("../../canopy-admin-dashboard/api/src/database/crud");
 
 const add = async (options) => {
   let answer = options;
@@ -58,15 +50,8 @@ const add = async (options) => {
     console.log(error)
   }
 
-  // Add distribution to PostgreSQL DB
-  try {
-    await pool.query(
-      'INSERT INTO cdn_distributions (distribution_id, realtime_config_id) VALUES($1, $2)',
-      [answer.distributionId, realtimeConfig.RealtimeLogConfig]
-    );
-  } catch (error) {
-    console.log(error);
-  }
+  // Add distribution info to DB
+  await saveDistribution(answer.distributionId, JSON.stringify(realtimeConfig.RealtimeLogConfig));
 };
 
 module.exports = { add };

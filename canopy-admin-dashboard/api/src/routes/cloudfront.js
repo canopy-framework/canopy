@@ -1,37 +1,27 @@
 import fs from 'fs';
 import path from 'path';
 import { Router } from 'express';
-import { Pool } from "pg";
-
-const pool = new Pool({
-  user: "postgres",
-  password: 'password',
-  database: "dashboard_storage",
-  port: 5432,
-  host: "localhost",
-});
+import { listAllDistributions } from '../database/crud';
 
 const router = Router();
 
 const getCloudFrontInfo = async () => {
   const awsConfigData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'aws-config.json')));
-  // let distributionData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', '..', 'cloudfront-distributions.json'))).map((distObject) => distObject.distributionId);
-  // distributionData.unshift(awsConfigData.distributionId);
 
   let distributionData = [];
 
-  const res = await pool.query("SELECT * FROM cdn_distributions");
-  distributionData.push(...res.rows.map((row) => row.distribution_id));
-  
+  const rows = await listAllDistributions();
+  distributionData.push(...rows.map((row) => row.distributionId));
+
   let info = [];
 
   distributionData.forEach((id, index) => {
     info[index] = {};
     info[index]['distributionId'] = id;
     info[index]['region'] = awsConfigData.region;
-    
   });
-  return info; 
+
+  return info;
 };
 
 router.get('/info', async (req, res) => {
