@@ -1,6 +1,9 @@
-# Welcome to your CDK JavaScript project
+# Welcome to Canopy
 
-This is a blank project for CDK development with JavaScript.
+In order to run Canopy, you need to have the following prerequisites set up on your system:
+* `aws` command, you can find more information on how to set it up [here](https://aws.amazon.com/cli/)
+* Node.js 16
+* SQLite3
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app. The build step is not required when using JavaScript.
 
