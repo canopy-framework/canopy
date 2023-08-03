@@ -43,13 +43,7 @@ const configure = async (options) => {
         name: "region",
         message: "Please choose one of the following AWS regions:",
         choices: ['us-east-1', 'us-west-2', 'eu-west-1', "eu-south-1", "eu-south-2", /* please add other regions you tested from your end */],
-      },
-      {
-        type: "password",
-        mask: true,
-        name: "adminPassword",
-        message: "Please enter your `sudo` password in order to setup a PostgreSQL Database for Canopy's admin dashboard",
-      },
+      }
     ]);
   }
 
@@ -69,9 +63,6 @@ const configure = async (options) => {
   const configureSecretKey = `aws configure set aws_secret_access_key ${answers.secretAccessKey}`;
   const configureRegion = `aws configure set region ${answers.region}`;
   const bootstrap = `cdk bootstrap ${answers.accountNumber}/${answers.region}`;
-
-  // Command for executing bash script that sets up a postgreSQL database, loads schema and starts the DB server
-  const setupDB = `echo ${answers.adminPassword} | sudo -S bash ${path.join(__dirname, '..', 'db', 'setup_dashboard_db.sh')} > setup_db_output.log 2>&1`;
   
   // Execute above commands
   const configSpinner = ora('Setting up AWS credentials & configuration').start();
@@ -92,16 +83,6 @@ const configure = async (options) => {
     spinner.succeed('Bootstrapping successful.');
   } catch (error) {
     spinner.fail('Bootstrapping failed.')
-    console.log(error);
-  }
-
-  // Set up dashboard database
-  const databaseSpinner = ora("Setting up Canopy's admin dashboard").start();
-  try {
-    await exec(setupDB);
-    databaseSpinner.succeed('Admin dashboard successfully setup.');
-  } catch(error) {
-    databaseSpinner.fail('Error setting up the database')
     console.log(error);
   }
 }
