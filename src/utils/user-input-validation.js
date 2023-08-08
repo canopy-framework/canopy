@@ -23,15 +23,22 @@ const isValidAWSSecretAccessKey = (secretAccessKey) => {
 };
 
 const isValidHttpEndpoint = (endpoint) => {
-  const regex = /^https?:\/\/.+/;
+  const httpEndpointRegex = /^https?:\/\/.+/;
 
-  return regex.test(endpoint) || "Invalid HTTP endpoint!";
+  return httpEndpointRegex.test(endpoint) || "Invalid HTTP endpoint!";
 };
+
+const isValidRealtimeBuffer = (buffer) => {
+  const bufferRegex = /^(?:[1-9]|[1-5]\d|60)$/;
+
+  return bufferRegex.test(buffer) || "Invalid buffer interval value!";
+}
 
 module.exports = {
   isValidAWSAccountNumber,
   isValidCloudFrontDistributionID,
   isValidAWSAccessKeyID,
   isValidAWSSecretAccessKey,
-  isValidHttpEndpoint
+  isValidHttpEndpoint,
+  isValidRealtimeBuffer
 }

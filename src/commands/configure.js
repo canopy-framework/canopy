@@ -28,7 +28,8 @@ const configure = async (options) => {
       },
       {
         name: "realtimeBuffer",
-        message: "Please enter your desired minimum real-time buffer interval(1-60) seconds:"
+        message: "Please enter your desired real-time buffer interval(1-60) in seconds:",
+        validate: input.isValidRealtimeBuffer
       },
       {
         name: "accessKeyId",
