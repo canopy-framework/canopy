@@ -27,6 +27,10 @@ const configure = async (options) => {
         validate: input.isValidCloudFrontDistributionID,
       },
       {
+        name: "realtimeBuffer",
+        message: "Please enter your desired minimum real-time buffer interval(1-60) seconds:"
+      },
+      {
         name: "accessKeyId",
         message: "Please enter your AWS access key ID:",
         validate: input.isValidAWSAccessKeyID
@@ -56,6 +60,7 @@ const configure = async (options) => {
     accountNumber: answers.accountNumber,
     distributionId: answers.distributionId,
     region: answers.region,
+    realtimeBuffer: answers.realtimeBuffer
   }, null, 2));
   
   // Commands for configuring AWS credentials & bootstrapping
