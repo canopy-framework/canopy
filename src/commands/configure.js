@@ -5,7 +5,7 @@ const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const input = require("../utils/user-input-validation");
+const input = require(path.join(__dirname, "../utils/user-input-validation"));
 
 const configure = async (options) => {
   const numOfOptions = Object.keys(options).length;
@@ -57,7 +57,7 @@ const configure = async (options) => {
     answers[lowerCaseKey] = options[key]
   })
 
-  fs.writeFileSync('./aws-config.json', JSON.stringify({
+  fs.writeFileSync(path.join(__dirname, '../../aws-config.json'), JSON.stringify({
     accountNumber: answers.accountNumber,
     distributionId: answers.distributionId,
     region: answers.region,

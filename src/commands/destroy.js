@@ -5,8 +5,9 @@ const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
 const { CloudFrontClient, GetDistributionConfigCommand, UpdateDistributionCommand, DeleteRealtimeLogConfigCommand } = require("@aws-sdk/client-cloudfront");
 const iam = require('@aws-sdk/client-iam');
-const AWSConfig = require('../../aws-config.json');
-const { deleteAllDistributions, listAllDistributions } = require("../../canopy-admin-dashboard/api/src/database/crud");
+const path = require('path');
+const AWSConfig = require(path.join(__dirname, '../../aws-config.json'));
+const { deleteAllDistributions, listAllDistributions } = require(path.join(__dirname, "../../canopy-admin-dashboard/api/src/database/crud"));
 
 async function confirmDeletion() {
   const question = {
@@ -26,8 +27,9 @@ const destroy = async () => {
   
   // Delete Canopy's AWS Infrastructure
   try {
-    await exec('cdk destroy canopy-frontend-stack --force');
-    await exec('cdk destroy canopy-backend-stack --force');
+    const appPath = path.join(__dirname, "../../bin/canopy-cli.js");
+    await exec(`cdk destroy --app "node ${appPath}" canopy-frontend-stack --force`);
+    await exec(`cdk destroy --app "node ${appPath}" canopy-backend-stack --force`);
     destroySpinner.succeed('Canopy AWS Infrastructure successfully deleted.');
   } catch (error) {
     destroySpinner.fail('Deleting Canopy AWS Infrastructure failed.');

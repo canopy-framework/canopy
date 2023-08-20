@@ -1,10 +1,10 @@
-// const fs = require('fs');
+const path = require('path');
 const inquirer = require('inquirer');
 const ora = require('ora-classic');
-const validations = require("../utils/user-input-validation");
-const AWSConfig = require('../../aws-config.json');
+const validations = require(path.join(__dirname, "../utils/user-input-validation"));
+const AWSConfig = require(path.join(__dirname, '../../aws-config.json'));
 const { CloudFrontClient, GetRealtimeLogConfigCommand, GetDistributionConfigCommand, UpdateDistributionCommand } = require('@aws-sdk/client-cloudfront');
-const { saveDistribution } = require("../../canopy-admin-dashboard/api/src/database/crud");
+const { saveDistribution } = require(path.join(__dirname, "../../canopy-admin-dashboard/api/src/database/crud"));
 
 const add = async (options) => {
   let answer = options;

@@ -1,15 +1,16 @@
 const gradient = require('gradient-string');
-const { canopyLogo } = require('../constants/canopy-logo');
+const path = require('path');
+const { canopyLogo } = require(path.join(__dirname, '../constants/canopy-logo'));
 const ora = require('ora-classic');
 const { promisify } = require('util');
 const baseExec = require('child_process').exec;
 const exec = promisify(baseExec);
-const path = require('path');
-const AWSConfig = require('../../aws-config.json');
+
+const AWSConfig = require(path.join(__dirname, '../../aws-config.json'));
 const { CloudFrontClient, GetRealtimeLogConfigCommand } = require('@aws-sdk/client-cloudfront');
 const AWS = require('aws-sdk');
 const fs = require('fs');
-const { saveDistribution } = require("../../canopy-admin-dashboard/api/src/database/crud");
+const { saveDistribution } = require(path.join(__dirname, "../../canopy-admin-dashboard/api/src/database/crud"));
 
 const deploy = async () => {
   console.log(gradient.atlas(canopyLogo));
@@ -17,8 +18,9 @@ const deploy = async () => {
   
   // Deploy Canopy to AWS Infrastructure
   try {
-    await exec('cdk deploy canopy-backend-stack --require-approval never');
-    await exec('cdk deploy canopy-frontend-stack --require-approval never');
+    const appPath = path.join(__dirname, "../../bin/canopy-cli.js");
+    await exec(`cdk deploy --app "node ${appPath}" canopy-backend-stack --require-approval never`);
+    await exec(`cdk deploy --app "node ${appPath}" canopy-frontend-stack --require-approval never`);
     deploySpinner.succeed('Deployment successful.');
   } catch (error) {
     deploySpinner.fail('Deployment failed.');
