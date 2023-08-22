@@ -1,3 +1,5 @@
+![Twitter Profile Image](https://github.com/canopy-framework/canopy-cli/assets/75907821/f4b308ce-9861-4f06-97b1-911de5b4fa2a)
+
 # Welcome to Canopy
 
 In order to run Canopy, you need to have the following prerequisites set up on your system:
@@ -35,5 +37,5 @@ Commands:
 
 ### Login for Grafana
 
-username: admin
-password: admin
+- username: admin
+- password: admin
