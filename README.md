@@ -1,5 +1,3 @@
-![Twitter Profile Image](https://github.com/canopy-framework/canopy-cli/assets/75907821/f4b308ce-9861-4f06-97b1-911de5b4fa2a)
-
 # Canopy
 
 # Prerequisites
