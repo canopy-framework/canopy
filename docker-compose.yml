@@ -36,4 +36,3 @@ volumes:
   db_data:
   db_logs:
   grafana_data:
-  vector_data:
